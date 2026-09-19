@@ -1,8 +1,8 @@
-const SHELL_CACHE = 'epoch-education-shell-v53';
-const RUNTIME_CACHE = 'epoch-education-runtime-v53';
+const SHELL_CACHE = 'epoch-education-shell-v54';
+const RUNTIME_CACHE = 'epoch-education-runtime-v54';
 const SHELL = [
-  './', './index.html', './styles.css?v=53', './content-data.js?v=53', './app.js?v=53', './platform-features.js?v=53', './bootstrap.js?v=53',
-  './manifest.webmanifest?v=53',
+  './', './index.html', './styles.css?v=54', './content-data.js?v=54', './app.js?v=54', './platform-features.js?v=54', './bootstrap.js?v=54',
+  './manifest.webmanifest?v=54',
   './assets/branding/enterprise-symbol.png', './assets/branding/enterprise-symbol-light.png',
   './assets/branding/favicon-16.png', './assets/branding/favicon-32.png', './assets/branding/favicon-light-16.png', './assets/branding/favicon-light-32.png',
   './assets/branding/apple-touch-icon.png', './assets/branding/apple-touch-icon-light.png',

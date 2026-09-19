@@ -4710,7 +4710,9 @@ html[data-theme="light"] .roadmap-node.is-complete .roadmap-node-index { backgro
   .track-card-actions .button,.track-card-actions .text-button { width:100%; justify-content:center; }
 }
 
-/* ==========================================================================\n   Product polish v46 — visual consistency, hierarchy and responsive QA\n   ========================================================================== */
+/* ==========================================================================
+   Product polish v46 — visual consistency, hierarchy and responsive QA
+   ========================================================================== */
 
 :root {
   --shell: min(1540px, calc(100vw - 64px));
@@ -5046,7 +5048,9 @@ html[data-theme="light"] .workbench { box-shadow: 0 16px 38px rgba(43,38,32,.10)
 }
 
 
-/* ==========================================================================\n   Quality consolidation v47 — final authority for responsive/accessibility QA\n   ========================================================================== */
+/* ==========================================================================
+   Quality consolidation v47 — final authority for responsive/accessibility QA
+   ========================================================================== */
 .tkinter-runtime {
   width:100%; min-height:340px; display:grid; place-items:center; padding:22px;
   overflow:auto; background:#0b0d0f; color:#e9edf1;
@@ -5155,3 +5159,30 @@ html[data-theme="light"] .feedback-body select, html[data-theme="light"] .feedba
   .feedback-actions > span { display:none; }
 }
 
+/* ==========================================================================
+   Quality audit v54 — dialog, mobile controls and fullscreen stability
+   ========================================================================== */
+.action-dialog { width:min(560px,calc(100vw - 28px)); }
+.action-dialog #eeActionDialogMessage { overflow-wrap:anywhere; }
+.action-dialog .saved-code-dialog-actions { grid-template-columns:1fr auto auto; }
+.action-dialog .saved-code-dialog-actions > span:first-child { display:none; }
+
+@supports (height:100dvh) {
+  .workbench:fullscreen,
+  .fullscreen-fallback,
+  .result-focus-fallback { height:100dvh !important; min-height:100dvh !important; }
+  .preview-stage:fullscreen #previewFrame { min-height:100dvh; }
+}
+
+@media (max-width:620px) {
+  .action-dialog { width:calc(100vw - 16px); }
+  .action-dialog .saved-code-dialog-actions { grid-template-columns:1fr 1fr; }
+  .action-dialog .saved-code-dialog-actions > span { display:none; }
+}
+
+@media (max-width:390px) {
+  .header-actions { gap:4px; }
+  .mobile-menu-button,.icon-button,.search-trigger {
+    width:40px; height:40px; min-width:40px; min-height:40px; padding:0; justify-content:center;
+  }
+}

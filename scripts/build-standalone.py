@@ -10,7 +10,7 @@ platform = (root / 'platform-features.js').read_text(encoding='utf-8')
 bootstrap = (root / 'bootstrap.js').read_text(encoding='utf-8')
 
 # Mark standalone mode so service-worker/PWA code knows not to register local files.
-html = re.sub(r'<html lang="pt-BR" data-theme="dark"[^>]*>', '<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="53">', html, count=1)
+html = re.sub(r'<html lang="pt-BR" data-theme="dark"[^>]*>', '<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="54">', html, count=1)
 
 # Convert all branding images referenced by the document (including paths inside inline theme bootstrap scripts) to data URIs.
 branding = root / 'assets' / 'branding'

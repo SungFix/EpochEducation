@@ -21,5 +21,7 @@ jobs:
           node --check platform-features.js
           node --check bootstrap.js
           node --check service-worker.js
+      - name: Regenerar standalone para validação
+        run: python3 scripts/build-standalone.py
       - name: Integridade do site e conteúdo
         run: node scripts/validate.mjs

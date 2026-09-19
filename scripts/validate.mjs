@@ -107,8 +107,9 @@ else ok('Ações da interface usam diálogos visuais do Epoch Education');
 const schemaSource = fs.existsSync(path.join(root,'supabase/schema.sql')) ? read('supabase/schema.sql') : '';
 
 if (css.lastIndexOf('Quality consolidation v47') < css.lastIndexOf('Product polish v46')) fail('Camada final de CSS v47 não preservada');
-else if (css.lastIndexOf('Feedback integration v48') < css.lastIndexOf('Quality consolidation v47')) fail('Camada final de CSS v48 não é a autoridade mais recente');
-else ok('Autoridade CSS v48 consolidada');
+else if (css.lastIndexOf('Feedback integration v48') < css.lastIndexOf('Quality consolidation v47')) fail('Camada de feedback v48 fora de ordem');
+else if (css.lastIndexOf('Quality audit v54') < css.lastIndexOf('Feedback integration v48')) fail('Camada final de CSS v54 não é a autoridade mais recente');
+else ok('Autoridade CSS v54 consolidada');
 if (data) {
   const tipCounts = new Map();
   for (const lesson of data.lessons || []) { const tip=String(lesson.tip || '').trim(); if (tip) tipCounts.set(tip,(tipCounts.get(tip)||0)+1); }
@@ -126,8 +127,30 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*53/.test(platformSource)) fail('Versão de backup não atualizada para v53');
+if (!/appVersion\s*:\s*54/.test(platformSource)) fail('Versão de backup não atualizada para v54');
 else ok('Versão de backup atualizada');
+const expectedPublicVersion = 54;
+const publicVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1]));
+if (publicVersionRefs.some(version => version !== expectedPublicVersion)) fail(`Referências públicas fora da v${expectedPublicVersion}: ${[...new Set(publicVersionRefs)].join(', ')}`);
+else ok(`Referências públicas alinhadas na v${expectedPublicVersion}`);
+if (!workerSource.includes(`epoch-education-shell-v${expectedPublicVersion}`) || !workerSource.includes(`epoch-education-runtime-v${expectedPublicVersion}`)) fail('Caches do Service Worker fora da versão pública atual');
+else ok('Caches do Service Worker alinhados com a versão pública');
+if (appSource.includes("dialog.style.width = 'min(560px")) fail('Largura do diálogo de ação voltou a ser controlada inline no JavaScript');
+else if (!css.includes('.action-dialog')) fail('Estilo consolidado do diálogo de ação ausente');
+else ok('Diálogo de ação controlado pelo CSS');
+if (!css.includes('Quality audit v54') || !css.includes('100dvh')) fail('Camada final de estabilidade visual v54 ausente');
+else ok('Camada final de estabilidade visual v54 presente');
+
+for (const standaloneFile of ['Epoch-Education.html','index-standalone-preview.html']) {
+  if (!fs.existsSync(path.join(root,standaloneFile))) fail(`Standalone ausente: ${standaloneFile}`);
+}
+if (fs.existsSync(path.join(root,'Epoch-Education.html')) && fs.existsSync(path.join(root,'index-standalone-preview.html'))) {
+  const standalone = read('Epoch-Education.html');
+  const previewStandalone = read('index-standalone-preview.html');
+  if (!standalone.includes('data-build="54"')) fail('Standalone oficial não foi regenerado para v54');
+  if (standalone !== previewStandalone) fail('Standalone oficial e preview standalone divergiram');
+  else ok('Standalone oficial e preview estão sincronizados');
+}
 if (!workerSource.includes("request.mode === 'navigate'") || /catch\(\(\) => caches\.match\('\.\/index\.html'\)\)/.test(workerSource)) fail('Fallback offline do Service Worker ainda pode devolver HTML para assets');
 else ok('Fallback PWA separado entre navegação e assets');
 for (const asset of ['favicon-light-16.png','favicon-light-32.png','apple-touch-icon-light.png']) if (!workerSource.includes(asset)) fail(`Asset Light Mode ausente do cache PWA: ${asset}`);

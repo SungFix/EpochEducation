@@ -1,4 +1,4 @@
-/* Epoch Education — platform features v53
+/* Epoch Education — platform features v54
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -131,7 +131,7 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:53,
+    appVersion:54,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
@@ -322,7 +322,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=53').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=54').catch(() => {});
   }
   renderPwaStatus();
 }

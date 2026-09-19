@@ -11,8 +11,7 @@ function ensureEeActionDialog() {
   if (dialog) return dialog;
   dialog = document.createElement('dialog');
   dialog.id = 'eeActionDialog';
-  dialog.className = 'saved-code-dialog';
-  dialog.style.width = 'min(560px, calc(100vw - 28px))';
+  dialog.className = 'saved-code-dialog action-dialog';
   dialog.setAttribute('aria-labelledby', 'eeActionDialogTitle');
   dialog.setAttribute('aria-describedby', 'eeActionDialogMessage');
   dialog.innerHTML = `<div class="saved-code-modal">
