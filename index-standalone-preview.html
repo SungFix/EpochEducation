@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="53">
+<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="54">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -5202,6 +5202,33 @@ html[data-theme="light"] .feedback-body select, html[data-theme="light"] .feedba
   .feedback-actions > span { display:none; }
 }
 
+/* ==========================================================================
+   Quality audit v54 — dialog, mobile controls and fullscreen stability
+   ========================================================================== */
+.action-dialog { width:min(560px,calc(100vw - 28px)); }
+.action-dialog #eeActionDialogMessage { overflow-wrap:anywhere; }
+.action-dialog .saved-code-dialog-actions { grid-template-columns:1fr auto auto; }
+.action-dialog .saved-code-dialog-actions > span:first-child { display:none; }
+
+@supports (height:100dvh) {
+  .workbench:fullscreen,
+  .fullscreen-fallback,
+  .result-focus-fallback { height:100dvh !important; min-height:100dvh !important; }
+  .preview-stage:fullscreen #previewFrame { min-height:100dvh; }
+}
+
+@media (max-width:620px) {
+  .action-dialog { width:calc(100vw - 16px); }
+  .action-dialog .saved-code-dialog-actions { grid-template-columns:1fr 1fr; }
+  .action-dialog .saved-code-dialog-actions > span { display:none; }
+}
+
+@media (max-width:390px) {
+  .header-actions { gap:4px; }
+  .mobile-menu-button,.icon-button,.search-trigger {
+    width:40px; height:40px; min-width:40px; min-height:40px; padding:0; justify-content:center;
+  }
+}
 
 </style>
 </head>
@@ -5565,8 +5592,7 @@ function ensureEeActionDialog() {
   if (dialog) return dialog;
   dialog = document.createElement('dialog');
   dialog.id = 'eeActionDialog';
-  dialog.className = 'saved-code-dialog';
-  dialog.style.width = 'min(560px, calc(100vw - 28px))';
+  dialog.className = 'saved-code-dialog action-dialog';
   dialog.setAttribute('aria-labelledby', 'eeActionDialogTitle');
   dialog.setAttribute('aria-describedby', 'eeActionDialogMessage');
   dialog.innerHTML = `<div class="saved-code-modal">
@@ -10412,7 +10438,7 @@ function init() {
 
 </script>
   <script>
-/* Epoch Education — platform features v53
+/* Epoch Education — platform features v54
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -10545,7 +10571,7 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:53,
+    appVersion:54,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
@@ -10736,7 +10762,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=53').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=54').catch(() => {});
   }
   renderPwaStatus();
 }
