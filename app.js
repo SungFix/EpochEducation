@@ -1205,16 +1205,23 @@ function renderExercises() {
   const complete = state.completedExercises.includes(exercise.id);
   const attempts = state.exerciseAttempts[exercise.id] || 0;
   const isCodeAnswer = !exercise.options && (exercise.type === 'Prever resultado' || /[`{}\[\]();=>]/.test(exercise.prompt));
-  const options = exercise.options ? `<div class="options" role="radiogroup" aria-label="Opções de resposta">${exercise.options.map((option, index) => `<button class="option" data-value="${escapeAttr(option)}" type="button" role="radio" aria-checked="false"><span class="option-letter">${String.fromCharCode(65 + index)}</span><span class="option-text">${escapeHtml(option)}</span></button>`).join('')}</div>` : `<label class="answer-field"><span class="answer-label">Sua resposta</span><textarea class="answer-input ${isCodeAnswer ? 'code-answer' : ''}" id="exerciseAnswer" placeholder="Digite sua resposta..." aria-label="Sua resposta"></textarea><small>${isCodeAnswer ? 'Ctrl/⌘ + Enter para verificar' : 'Escreva a resposta e verifique quando estiver pronto.'}</small></label>`;
+  const options = exercise.options ? `<div class="options" role="radiogroup" aria-label="Opções de resposta">${exercise.options.map((option, index) => `<button class="option" data-value="${escapeAttr(option)}" type="button" role="radio" aria-checked="false" tabindex="${index === 0 ? '0' : '-1'}"><span class="option-letter">${String.fromCharCode(65 + index)}</span><span class="option-text">${escapeHtml(option)}</span></button>`).join('')}</div>` : `<label class="answer-field"><span class="answer-label">Sua resposta</span><textarea class="answer-input ${isCodeAnswer ? 'code-answer' : ''}" id="exerciseAnswer" placeholder="Digite sua resposta..." aria-label="Sua resposta"></textarea><small>${isCodeAnswer ? 'Ctrl/⌘ + Enter para verificar' : 'Escreva a resposta e verifique quando estiver pronto.'}</small></label>`;
   $('#exerciseCard').innerHTML = `<div class="exercise-card-progress"><span style="width:${((currentIndex + 1) / Math.max(1,list.length)) * 100}%"></span></div><div class="exercise-card-head"><div class="exercise-heading"><div class="badge-row exercise-badges"><span class="badge">${escapeHtml(exercise.tech)}</span><span class="badge">${escapeHtml(exercise.difficulty || 'Prática')}</span><span class="badge subtle">${escapeHtml(exercise.type)}</span></div><h2>${escapeHtml(exercise.title)}</h2></div><span class="exercise-counter">${currentIndex + 1} de ${list.length}</span></div><p class="exercise-prompt">${escapeHtml(exercise.prompt)}</p>${options}<div class="exercise-actions"><button class="button primary" id="checkAnswer" type="button">Verificar resposta</button><span class="attempt-count">${attempts ? `${attempts} tentativa${attempts === 1 ? '' : 's'}` : 'Primeira tentativa'}</span></div>${complete ? '<div class="exercise-complete-note"><span>✓</span><p><strong>Já concluído.</strong> Você pode refazer para revisar.</p></div>' : ''}<div id="exerciseFeedback" aria-live="polite"></div><nav class="exercise-nav" aria-label="Navegação entre exercícios"><button class="text-button" id="previousExercise" type="button" ${currentIndex === 0 ? 'disabled' : ''}>← Anterior</button><span>${currentIndex + 1} / ${list.length}</span><button class="text-button" id="nextExerciseNav" type="button" ${currentIndex >= list.length - 1 ? 'disabled' : ''}>Próximo →</button></nav>`;
 
   let selected = '';
-  $$('.option', $('#exerciseCard')).forEach(option => option.addEventListener('click', () => {
-    $$('.option', $('#exerciseCard')).forEach(item => { item.classList.remove('selected'); item.setAttribute('aria-checked','false'); });
-    option.classList.add('selected');
-    option.setAttribute('aria-checked','true');
+  const optionButtons = $('.option', $('#exerciseCard'));
+  const selectExerciseOption = (option, { focus = false } = {}) => {
+    if (!option) return;
+    optionButtons.forEach(item => {
+      const active = item === option;
+      item.classList.toggle('selected', active);
+      item.setAttribute('aria-checked', String(active));
+      item.tabIndex = active ? 0 : -1;
+    });
     selected = option.dataset.value;
-  }));
+    if (focus) option.focus();
+  };
+  optionButtons.forEach(option => option.addEventListener('click', () => selectExerciseOption(option)));
 
   const verify = () => {
     const raw = exercise.options ? selected : ($('#exerciseAnswer')?.value || '');
@@ -1257,6 +1264,20 @@ function renderExercises() {
     if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) { event.preventDefault(); verify(); }
   });
   $('#exerciseCard')?.addEventListener('keydown', event => {
+    const radio = event.target.closest('.option[role="radio"]');
+    if (radio && optionButtons.length) {
+      const radioIndex = optionButtons.indexOf(radio);
+      let nextRadio = -1;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextRadio = (radioIndex + 1) % optionButtons.length;
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextRadio = (radioIndex - 1 + optionButtons.length) % optionButtons.length;
+      if (event.key === 'Home') nextRadio = 0;
+      if (event.key === 'End') nextRadio = optionButtons.length - 1;
+      if (nextRadio >= 0) {
+        event.preventDefault();
+        selectExerciseOption(optionButtons[nextRadio], { focus:true });
+        return;
+      }
+    }
     const interactive = event.target.closest('button,a,input,textarea,select');
     if (!interactive && event.key === 'Enter' && exercise.options) { event.preventDefault(); verify(); }
     if (!interactive && event.key === 'ArrowLeft' && currentIndex > 0) { event.preventDefault(); goToExercise(list, currentIndex - 1); }
