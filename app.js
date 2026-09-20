@@ -3015,7 +3015,7 @@ function initPlayground() {
 
   $$('#editorTabs button').forEach(button => button.addEventListener('click', () => selectEditorTab(button.dataset.lang)));
   $('#editorTabs')?.addEventListener('keydown', event => {
-    const tabs = $('#editorTabs button');
+    const tabs = $$('#editorTabs button');
     const focusedIndex = tabs.indexOf(event.target.closest('button'));
     const selectedIndex = tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true');
     const index = focusedIndex >= 0 ? focusedIndex : Math.max(0, selectedIndex);
@@ -3253,7 +3253,7 @@ function languageLabel(lang) {
 }
 
 function syncEditorTabs() {
-  $('#editorTabs button').forEach(tab => {
+  $$('#editorTabs button').forEach(tab => {
     const selected = tab.dataset.lang === activeLang;
     tab.setAttribute('aria-selected', String(selected));
     tab.tabIndex = selected ? 0 : -1;
@@ -4571,7 +4571,7 @@ function renderSearch(query) {
       { label:'Abrir Playground', href:'#playground', meta:'Testar código' }
     ].filter(Boolean);
     resultHost.innerHTML = `${recent.length ? `<section class="search-start-section"><div class="search-group-title"><span>Pesquisas recentes</span><span class="search-group-actions"><small>${recent.length}</small><button class="search-clear-history" id="clearSearchHistory" type="button">Limpar</button></span></div><div class="search-history-chips">${recent.map(item => `<button class="search-history-chip" type="button" data-search-history="${escapeAttr(item)}"><svg class="ui-icon" aria-hidden="true"><use href="#icon-clock"></use></svg>${escapeHtml(item)}</button>`).join('')}</div></section>` : ''}<section class="search-start-section"><div class="search-group-title"><span>Atalhos</span><small>3</small></div><div class="search-shortcuts">${recommended.map(item => `<a href="${item.href}" class="search-shortcut"><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.meta)}</small></span><span aria-hidden="true">→</span></a>`).join('')}</div></section>`;
-    $('[data-search-history]', resultHost).forEach(button => button.addEventListener('click', () => { input.value = button.dataset.searchHistory; searchExpandedGroups.clear(); renderSearch(input.value); input.focus(); }));
+    $$('[data-search-history]', resultHost).forEach(button => button.addEventListener('click', () => { input.value = button.dataset.searchHistory; searchExpandedGroups.clear(); renderSearch(input.value); input.focus(); }));
     $('#clearSearchHistory', resultHost)?.addEventListener('click', () => {
       state.searchHistory = [];
       saveState();
@@ -4580,7 +4580,7 @@ function renderSearch(query) {
       input.focus();
       showToast('Pesquisas recentes limpas.');
     });
-    $('.search-shortcut', resultHost).forEach(link => link.addEventListener('click', () => $('#searchDialog')?.close()));
+    $$('.search-shortcut', resultHost).forEach(link => link.addEventListener('click', () => $('#searchDialog')?.close()));
     return;
   }
 

@@ -129,9 +129,9 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*60/.test(platformSource)) fail('Versão de backup não atualizada para v60');
+if (!/appVersion\s*:\s*61/.test(platformSource)) fail('Versão de backup não atualizada para v61');
 else ok('Versão de backup atualizada');
-const expectedPublicVersion = 60;
+const expectedPublicVersion = 61;
 const publicVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1]));
 if (publicVersionRefs.some(version => version !== expectedPublicVersion)) fail(`Referências públicas fora da v${expectedPublicVersion}: ${[...new Set(publicVersionRefs)].join(', ')}`);
 else ok(`Referências públicas alinhadas na v${expectedPublicVersion}`);
@@ -162,10 +162,16 @@ if (!appSource.includes('const encodedRoute = location.hash.slice(1)') || !appSo
 else ok('Roteamento protegido contra hash malformado');
 if (appSource.includes("behavior: 'instant'")) fail('Scroll de rota usa valor não padronizado');
 else ok('Scroll de rota usa comportamento compatível');
-if (!appSource.includes("const optionButtons = $('.option', $('#exerciseCard'));")) fail('Opções de múltipla escolha não usam coleção de elementos');
+if (!appSource.includes("const optionButtons = $$('.option', $('#exerciseCard'));")) fail('Opções de múltipla escolha não usam coleção de elementos');
 else ok('Coleção de opções de múltipla escolha verificada');
 if (appSource.includes('renderHome(); renderTracks(); renderExercises(); renderChallenges(); renderProjects(); renderGlossary(); renderProgress();')) fail('Inicialização ainda renderiza páginas ocultas antes da rota');
 else ok('Inicialização renderiza somente a rota ativa');
+const singleQueryCollectionPattern = /(?<!\$)\$\([^\)\n]+\)\.(?:forEach|map|filter|find|some|every|reduce|indexOf|findIndex)\s*\(/g;
+const singleQueryCollectionMatches = appSource.match(singleQueryCollectionPattern) || [];
+if (singleQueryCollectionMatches.length) fail(`$() usado como coleção: ${singleQueryCollectionMatches.join(', ')}`);
+else ok('Seletores de coleção usam $$()');
+if (!appSource.includes("const tabs = $$('#editorTabs button');")) fail('Navegação das abas do Playground não usa coleção');
+else ok('Navegação das abas usa coleção corretamente');
 if (appSource.includes("dialog.style.width = 'min(560px")) fail('Largura do diálogo de ação voltou a ser controlada inline no JavaScript');
 else if (!css.includes('.action-dialog')) fail('Estilo consolidado do diálogo de ação ausente');
 else ok('Diálogo de ação controlado pelo CSS');
@@ -186,7 +192,7 @@ for (const standaloneFile of ['Epoch-Education.html','index-standalone-preview.h
 if (fs.existsSync(path.join(root,'Epoch-Education.html')) && fs.existsSync(path.join(root,'index-standalone-preview.html'))) {
   const standalone = read('Epoch-Education.html');
   const previewStandalone = read('index-standalone-preview.html');
-  if (!standalone.includes('data-build="60"')) fail('Standalone oficial não foi regenerado para v60');
+  if (!standalone.includes('data-build="61"')) fail('Standalone oficial não foi regenerado para v61');
   if (standalone !== previewStandalone) fail('Standalone oficial e preview standalone divergiram');
   else ok('Standalone oficial e preview estão sincronizados');
 }
