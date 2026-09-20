@@ -129,9 +129,9 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*58/.test(platformSource)) fail('Versão de backup não atualizada para v58');
+if (!/appVersion\s*:\s*59/.test(platformSource)) fail('Versão de backup não atualizada para v59');
 else ok('Versão de backup atualizada');
-const expectedPublicVersion = 58;
+const expectedPublicVersion = 59;
 const publicVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1]));
 if (publicVersionRefs.some(version => version !== expectedPublicVersion)) fail(`Referências públicas fora da v${expectedPublicVersion}: ${[...new Set(publicVersionRefs)].join(', ')}`);
 else ok(`Referências públicas alinhadas na v${expectedPublicVersion}`);
@@ -158,6 +158,10 @@ if (!css.includes('summary:focus-visible') || !css.includes('Legibility + focus 
 else ok('Foco visível e legibilidade v57 presentes');
 if (!appSource.includes('const selectExerciseOption =') || !appSource.includes('nextRadio = (radioIndex + 1) % optionButtons.length') || !appSource.includes("item.tabIndex = active ? 0 : -1")) fail('Grupo de respostas de múltipla escolha sem navegação de rádio acessível');
 else ok('Grupo de respostas de múltipla escolha com foco e setas acessíveis');
+if (!appSource.includes('const encodedRoute = location.hash.slice(1)') || !appSource.includes('try { raw = decodeURIComponent(encodedRoute); } catch {}')) fail('Roteamento não está protegido contra hash malformado');
+else ok('Roteamento protegido contra hash malformado');
+if (appSource.includes("behavior: 'instant'")) fail('Scroll de rota usa valor não padronizado');
+else ok('Scroll de rota usa comportamento compatível');
 if (appSource.includes("dialog.style.width = 'min(560px")) fail('Largura do diálogo de ação voltou a ser controlada inline no JavaScript');
 else if (!css.includes('.action-dialog')) fail('Estilo consolidado do diálogo de ação ausente');
 else ok('Diálogo de ação controlado pelo CSS');
@@ -178,7 +182,7 @@ for (const standaloneFile of ['Epoch-Education.html','index-standalone-preview.h
 if (fs.existsSync(path.join(root,'Epoch-Education.html')) && fs.existsSync(path.join(root,'index-standalone-preview.html'))) {
   const standalone = read('Epoch-Education.html');
   const previewStandalone = read('index-standalone-preview.html');
-  if (!standalone.includes('data-build="58"')) fail('Standalone oficial não foi regenerado para v58');
+  if (!standalone.includes('data-build="59"')) fail('Standalone oficial não foi regenerado para v59');
   if (standalone !== previewStandalone) fail('Standalone oficial e preview standalone divergiram');
   else ok('Standalone oficial e preview estão sincronizados');
 }

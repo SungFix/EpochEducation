@@ -522,7 +522,9 @@ function route(event) {
   closeMobileNav();
   $('.lesson-sidebar')?.classList.remove('mobile-open');
   $('#lessonMobileToggle')?.setAttribute('aria-expanded', 'false');
-  const raw = decodeURIComponent(location.hash.slice(1) || 'home');
+  const encodedRoute = location.hash.slice(1) || 'home';
+  let raw = encodedRoute;
+  try { raw = decodeURIComponent(encodedRoute); } catch {}
   const [root, ...rest] = raw.split('/');
   let pageName = root;
   if (!['home','trilhas','aula','exercicios','desafios','projetos','playground','glossario','progresso'].includes(pageName)) pageName = 'not-found';
@@ -566,7 +568,7 @@ function route(event) {
   if (pageName === 'playground') refreshPlaygroundFromState();
 
   updateDocumentMeta(pageName, pageName === 'aula' ? lessonById.get(currentLessonId)?.title : '');
-  if (pageName !== 'not-found') window.scrollTo({ top: 0, behavior: 'instant' });
+  if (pageName !== 'not-found') window.scrollTo({ top: 0, behavior: 'auto' });
   if (event?.type === 'hashchange') {
     requestAnimationFrame(() => {
       const heading = $('.page.active h1') || $('#main');

@@ -1,4 +1,4 @@
-# Epoch Education — histórico completo v1 a v58
+# Epoch Education — histórico completo v1 a v59
 
 Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
 
@@ -60,3 +60,4 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v56 — RELEASE** — Auditoria aprofundada de PWA e acessibilidade: shell offline passou a pré-cachear exatamente os assets versionados usados pelo HTML, evitando perda de logo/favicons offline; validação CI cobre essa coerência; buscas ganharam nomes acessíveis explícitos; botão Restaurar do Playground recebeu semântica segura; e o tema automático acompanha mudanças do sistema até o usuário escolher um tema manualmente.
 - **v57 — RELEASE** — Segurança de dados e legibilidade: restauração de backup agora faz rollback do estado e dos projetos salvos se a substituição falhar, evitando restauração parcial; foco visível foi reforçado em elementos expansíveis; metadados excessivamente pequenos foram ampliados em áreas críticas; e alvos de toque da biblioteca de códigos foram reforçados em dispositivos de toque.
 - **v58 — RELEASE** — Acessibilidade dos exercícios refinada: alternativas de múltipla escolha agora usam foco roving coerente com `role=radio`, `aria-checked` sincronizado e navegação por setas, Home e End, mantendo clique/toque e a lógica de correção existentes.
+- **v59 — RELEASE** — Robustez do roteamento: hashes malformados deixam de lançar exceção em `decodeURIComponent` e passam a ser tratados com segurança pela navegação/404; o reposicionamento ao trocar de página usa comportamento de scroll padronizado para melhor compatibilidade entre navegadores.

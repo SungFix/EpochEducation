@@ -1,11 +1,11 @@
-const SHELL_CACHE = 'epoch-education-shell-v58';
-const RUNTIME_CACHE = 'epoch-education-runtime-v58';
+const SHELL_CACHE = 'epoch-education-shell-v59';
+const RUNTIME_CACHE = 'epoch-education-runtime-v59';
 const SHELL = [
-  './', './index.html', './styles.css?v=58', './content-data.js?v=58', './app.js?v=58', './platform-features.js?v=58', './bootstrap.js?v=58',
-  './manifest.webmanifest?v=58',
-  './assets/branding/enterprise-symbol.png?v=58', './assets/branding/enterprise-symbol-light.png?v=58',
-  './assets/branding/favicon-16.png?v=58', './assets/branding/favicon-32.png?v=58', './assets/branding/favicon-light-16.png?v=58', './assets/branding/favicon-light-32.png?v=58',
-  './assets/branding/apple-touch-icon.png?v=58', './assets/branding/apple-touch-icon-light.png?v=58',
+  './', './index.html', './styles.css?v=59', './content-data.js?v=59', './app.js?v=59', './platform-features.js?v=59', './bootstrap.js?v=59',
+  './manifest.webmanifest?v=59',
+  './assets/branding/enterprise-symbol.png?v=59', './assets/branding/enterprise-symbol-light.png?v=59',
+  './assets/branding/favicon-16.png?v=59', './assets/branding/favicon-32.png?v=59', './assets/branding/favicon-light-16.png?v=59', './assets/branding/favicon-light-32.png?v=59',
+  './assets/branding/apple-touch-icon.png?v=59', './assets/branding/apple-touch-icon-light.png?v=59',
   './assets/branding/pwa-192.png', './assets/branding/pwa-512.png'
 ];
 
