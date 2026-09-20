@@ -449,7 +449,7 @@ function finishExerciseSession() {
   activeExerciseSession = null;
   saveState();
   showToast(`Sessão concluída: ${summary.correct}/${summary.total} corretos (${summary.score}%).`);
-  renderExercises(); renderProgress(); renderHome();
+  renderExercises();
 }
 function showToast(message) {
   const region = $('#toastRegion');
@@ -1092,7 +1092,6 @@ function toggleLessonCompletion(lesson) {
   }
   saveState();
   renderLesson(lesson.id);
-  renderHome();
 }
 
 function exerciseFilteredList() {
@@ -1211,7 +1210,7 @@ function renderExercises() {
   $('#exerciseCard').innerHTML = `<div class="exercise-card-progress"><span style="width:${((currentIndex + 1) / Math.max(1,list.length)) * 100}%"></span></div><div class="exercise-card-head"><div class="exercise-heading"><div class="badge-row exercise-badges"><span class="badge">${escapeHtml(exercise.tech)}</span><span class="badge">${escapeHtml(exercise.difficulty || 'Prática')}</span><span class="badge subtle">${escapeHtml(exercise.type)}</span></div><h2>${escapeHtml(exercise.title)}</h2></div><span class="exercise-counter">${currentIndex + 1} de ${list.length}</span></div><p class="exercise-prompt">${escapeHtml(exercise.prompt)}</p>${options}<div class="exercise-actions"><button class="button primary" id="checkAnswer" type="button">Verificar resposta</button><span class="attempt-count">${attempts ? `${attempts} tentativa${attempts === 1 ? '' : 's'}` : 'Primeira tentativa'}</span></div>${complete ? '<div class="exercise-complete-note"><span>✓</span><p><strong>Já concluído.</strong> Você pode refazer para revisar.</p></div>' : ''}<div id="exerciseFeedback" aria-live="polite"></div><nav class="exercise-nav" aria-label="Navegação entre exercícios"><button class="text-button" id="previousExercise" type="button" ${currentIndex === 0 ? 'disabled' : ''}>← Anterior</button><span>${currentIndex + 1} / ${list.length}</span><button class="text-button" id="nextExerciseNav" type="button" ${currentIndex >= list.length - 1 ? 'disabled' : ''}>Próximo →</button></nav>`;
 
   let selected = '';
-  const optionButtons = $('.option', $('#exerciseCard'));
+  const optionButtons = $$('.option', $('#exerciseCard'));
   const selectExerciseOption = (option, { focus = false } = {}) => {
     if (!option) return;
     optionButtons.forEach(item => {
@@ -1256,7 +1255,6 @@ function renderExercises() {
     $('#finishExerciseSession')?.addEventListener('click', finishExerciseSession);
     $('#retryExercise')?.addEventListener('click', () => { if (exercise.options) $('.option', $('#exerciseCard'))?.focus(); else $('#exerciseAnswer')?.focus(); });
     renderExerciseFilters();
-    renderHome();
   };
 
   $('#checkAnswer')?.addEventListener('click', verify);
@@ -1315,7 +1313,7 @@ function renderChallenges() {
     const completed = state.completedChallenges.includes(challenge.id);
     state.completedChallenges = completed ? state.completedChallenges.filter(id => id !== challenge.id) : [...state.completedChallenges, challenge.id];
     if (!completed) recordActivity('challenge', `Desafio concluído: ${challenge.title}`, challenge.tech);
-    saveState(); renderChallenges(); renderHome();
+    saveState(); renderChallenges();
   }));
 }
 
@@ -1347,7 +1345,7 @@ function renderProjects() {
       recordActivity('project', `Projeto concluído: ${project.title}`, (project.tech || []).join(' · '));
     }
     if (!allDone) state.completedProjects = state.completedProjects.filter(id => id !== project.id);
-    saveState(); renderProjects(); renderHome();
+    saveState(); renderProjects();
   }));
   $$('.project-complete').forEach(button => button.addEventListener('click', () => {
     const project = projects.find(item => item.id === button.dataset.project);
@@ -1361,7 +1359,7 @@ function renderProjects() {
       state.projectSteps[project.id] = project.steps.map(() => true);
       recordActivity('project', `Projeto concluído: ${project.title}`, (project.tech || []).join(' · '));
     }
-    saveState(); renderProjects(); renderHome();
+    saveState(); renderProjects();
   }));
 }
 
@@ -4872,7 +4870,7 @@ function initResetProgress() {
   $('#resetProgress').addEventListener('click', async () => {
     if (!await eeConfirm('Aulas, exercícios, projetos e desafios concluídos neste navegador serão redefinidos.', { title:'Redefinir progresso?', confirmLabel:'Redefinir', tone:'danger' })) return;
     state.completedLessons = []; state.completedExercises = []; state.completedChallenges = []; state.completedProjects = []; state.projectSteps = {}; state.exerciseAttempts = {}; state.exerciseMistakes = []; state.exerciseHistory = {}; state.moduleCheckpoints = {}; state.activity = []; state.studyLog = {}; activeExerciseSession = null;
-    saveState(); renderProgress(); renderHome(); renderTracks(); renderExercises(); renderProjects(); renderChallenges();
+    saveState(); renderProgress();
   });
 }
 
@@ -4928,7 +4926,6 @@ function init() {
   enableHorizontalWheelScroll($('.tabs'));
   initResetProgress();
   bindLearningMechanicActions();
-  renderHome(); renderTracks(); renderExercises(); renderChallenges(); renderProjects(); renderGlossary(); renderProgress();
   route();
 }
 

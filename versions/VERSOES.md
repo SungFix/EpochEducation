@@ -1,4 +1,4 @@
-# Epoch Education — histórico completo v1 a v59
+# Epoch Education — histórico completo v1 a v60
 
 Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
 
@@ -61,3 +61,4 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v57 — RELEASE** — Segurança de dados e legibilidade: restauração de backup agora faz rollback do estado e dos projetos salvos se a substituição falhar, evitando restauração parcial; foco visível foi reforçado em elementos expansíveis; metadados excessivamente pequenos foram ampliados em áreas críticas; e alvos de toque da biblioteca de códigos foram reforçados em dispositivos de toque.
 - **v58 — RELEASE** — Acessibilidade dos exercícios refinada: alternativas de múltipla escolha agora usam foco roving coerente com `role=radio`, `aria-checked` sincronizado e navegação por setas, Home e End, mantendo clique/toque e a lógica de correção existentes.
 - **v59 — RELEASE** — Robustez do roteamento: hashes malformados deixam de lançar exceção em `decodeURIComponent` e passam a ser tratados com segurança pela navegação/404; o reposicionamento ao trocar de página usa comportamento de scroll padronizado para melhor compatibilidade entre navegadores.
+- **v60 — RELEASE** — Correção de regressão e desempenho: a coleção de alternativas de múltipla escolha volta a usar `$$()` corretamente, evitando falha em `.forEach`; o CI passa a proteger esse caso; e a inicialização deixa de renderizar todas as páginas ocultas antes do roteador, reduzindo trabalho de DOM e renderizações duplicadas. Atualizações de progresso também deixam de reconstruir telas ocultas desnecessariamente.
