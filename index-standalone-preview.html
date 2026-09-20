@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="58">
+<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="59">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -6156,7 +6156,9 @@ function route(event) {
   closeMobileNav();
   $('.lesson-sidebar')?.classList.remove('mobile-open');
   $('#lessonMobileToggle')?.setAttribute('aria-expanded', 'false');
-  const raw = decodeURIComponent(location.hash.slice(1) || 'home');
+  const encodedRoute = location.hash.slice(1) || 'home';
+  let raw = encodedRoute;
+  try { raw = decodeURIComponent(encodedRoute); } catch {}
   const [root, ...rest] = raw.split('/');
   let pageName = root;
   if (!['home','trilhas','aula','exercicios','desafios','projetos','playground','glossario','progresso'].includes(pageName)) pageName = 'not-found';
@@ -6200,7 +6202,7 @@ function route(event) {
   if (pageName === 'playground') refreshPlaygroundFromState();
 
   updateDocumentMeta(pageName, pageName === 'aula' ? lessonById.get(currentLessonId)?.title : '');
-  if (pageName !== 'not-found') window.scrollTo({ top: 0, behavior: 'instant' });
+  if (pageName !== 'not-found') window.scrollTo({ top: 0, behavior: 'auto' });
   if (event?.type === 'hashchange') {
     requestAnimationFrame(() => {
       const heading = $('.page.active h1') || $('#main');
@@ -10567,7 +10569,7 @@ function init() {
 
 </script>
   <script>
-/* Epoch Education — platform features v58
+/* Epoch Education — platform features v59
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -10700,7 +10702,7 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:58,
+    appVersion:59,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
@@ -10907,7 +10909,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=58').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=59').catch(() => {});
   }
   renderPwaStatus();
 }
