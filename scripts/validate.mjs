@@ -170,7 +170,7 @@ const singleQueryCollectionPattern = /(?<!\$)\$\([^\)\n]+\)\.(?:forEach|map|filt
 const singleQueryCollectionMatches = appSource.match(singleQueryCollectionPattern) || [];
 if (singleQueryCollectionMatches.length) fail(`$() usado como coleção: ${singleQueryCollectionMatches.join(', ')}`);
 else ok('Seletores de coleção usam $$()');
-if (!appSource.includes("const tabs = $('#editorTabs button');")) fail('Navegação das abas do Playground não usa coleção');
+if (!appSource.includes("const tabs = $$('#editorTabs button');")) fail('Navegação das abas do Playground não usa coleção');
 else ok('Navegação das abas usa coleção corretamente');
 if (!appSource.includes('function warmPythonRuntime()') || !appSource.includes("type === 'prepare'")) fail('Pré-aquecimento do runtime Python ausente');
 else ok('Runtime Python é preparado ao abrir a aba');
