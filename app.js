@@ -1075,8 +1075,9 @@ function renderLesson(id) {
 }
 
 function navigateToLesson(id) {
-  location.hash = `#aula/${encodeURIComponent(id)}`;
-  if (location.hash === `#aula/${encodeURIComponent(id)}`) renderLesson(id);
+  const targetHash = `#aula/${encodeURIComponent(id)}`;
+  if (location.hash === targetHash) renderLesson(id);
+  else location.hash = targetHash;
 }
 function toggleLessonCompletion(lesson) {
   const completed = state.completedLessons.includes(lesson.id);
@@ -2983,6 +2984,7 @@ function initPlayground() {
   });
   pg = { ...defaultPlayground, ...(state.playground || {}) };
   activeLang = ['html','css','js','python'].includes(state.playgroundLang) ? state.playgroundLang : 'html';
+  syncEditorTabs();
   $('#workbench')?.style.setProperty('--split', `${state.playgroundSplit || 55}%`);
   if ($('#pythonStdin')) $('#pythonStdin').value = state.pythonStdin || '';
   syncEditorMode();
@@ -2992,11 +2994,17 @@ function initPlayground() {
 
   $$('#editorTabs button').forEach(button => button.addEventListener('click', () => selectEditorTab(button.dataset.lang)));
   $('#editorTabs')?.addEventListener('keydown', event => {
-    const tabs = $$('#editorTabs button');
-    const index = tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true');
-    if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+    const tabs = $('#editorTabs button');
+    const focusedIndex = tabs.indexOf(event.target.closest('button'));
+    const selectedIndex = tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true');
+    const index = focusedIndex >= 0 ? focusedIndex : Math.max(0, selectedIndex);
+    let next = -1;
+    if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+    if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = tabs.length - 1;
+    if (next >= 0) {
       event.preventDefault();
-      const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
       tabs[next].focus();
       selectEditorTab(tabs[next].dataset.lang);
     }
@@ -3223,13 +3231,21 @@ function languageLabel(lang) {
   return ({ html:'HTML', css:'CSS', js:'JavaScript', python:'Python 3' })[lang] || lang;
 }
 
+function syncEditorTabs() {
+  $('#editorTabs button').forEach(tab => {
+    const selected = tab.dataset.lang === activeLang;
+    tab.setAttribute('aria-selected', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+  });
+}
+
 function selectEditorTab(lang) {
   pg[activeLang] = $('#codeEditor').value;
   activeLang = lang;
   state.playgroundLang = lang;
   state.playground = { ...pg };
   saveState();
-  $$('#editorTabs button').forEach(tab => tab.setAttribute('aria-selected', String(tab.dataset.lang === lang)));
+  syncEditorTabs();
   syncEditorMode();
   updateEditor();
   if (lang === 'python') preparePythonPane(); else runWebPlayground();
@@ -4533,9 +4549,17 @@ function renderSearch(query) {
       { label:'Prática rápida', href:'#exercicios', meta:'Exercícios recomendados' },
       { label:'Abrir Playground', href:'#playground', meta:'Testar código' }
     ].filter(Boolean);
-    resultHost.innerHTML = `${recent.length ? `<section class="search-start-section"><div class="search-group-title"><span>Pesquisas recentes</span><small>${recent.length}</small></div><div class="search-history-chips">${recent.map(item => `<button class="search-history-chip" type="button" data-search-history="${escapeAttr(item)}"><svg class="ui-icon" aria-hidden="true"><use href="#icon-clock"></use></svg>${escapeHtml(item)}</button>`).join('')}</div></section>` : ''}<section class="search-start-section"><div class="search-group-title"><span>Atalhos</span><small>3</small></div><div class="search-shortcuts">${recommended.map(item => `<a href="${item.href}" class="search-shortcut"><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.meta)}</small></span><span aria-hidden="true">→</span></a>`).join('')}</div></section>`;
-    $$('[data-search-history]', resultHost).forEach(button => button.addEventListener('click', () => { input.value = button.dataset.searchHistory; searchExpandedGroups.clear(); renderSearch(input.value); input.focus(); }));
-    $$('.search-shortcut', resultHost).forEach(link => link.addEventListener('click', () => $('#searchDialog')?.close()));
+    resultHost.innerHTML = `${recent.length ? `<section class="search-start-section"><div class="search-group-title"><span>Pesquisas recentes</span><span class="search-group-actions"><small>${recent.length}</small><button class="search-clear-history" id="clearSearchHistory" type="button">Limpar</button></span></div><div class="search-history-chips">${recent.map(item => `<button class="search-history-chip" type="button" data-search-history="${escapeAttr(item)}"><svg class="ui-icon" aria-hidden="true"><use href="#icon-clock"></use></svg>${escapeHtml(item)}</button>`).join('')}</div></section>` : ''}<section class="search-start-section"><div class="search-group-title"><span>Atalhos</span><small>3</small></div><div class="search-shortcuts">${recommended.map(item => `<a href="${item.href}" class="search-shortcut"><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.meta)}</small></span><span aria-hidden="true">→</span></a>`).join('')}</div></section>`;
+    $('[data-search-history]', resultHost).forEach(button => button.addEventListener('click', () => { input.value = button.dataset.searchHistory; searchExpandedGroups.clear(); renderSearch(input.value); input.focus(); }));
+    $('#clearSearchHistory', resultHost)?.addEventListener('click', () => {
+      state.searchHistory = [];
+      saveState();
+      input.value = '';
+      renderSearch('');
+      input.focus();
+      showToast('Pesquisas recentes limpas.');
+    });
+    $('.search-shortcut', resultHost).forEach(link => link.addEventListener('click', () => $('#searchDialog')?.close()));
     return;
   }
 
@@ -4602,7 +4626,13 @@ function initSearch() {
   });
   dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
   document.addEventListener('keydown', event => {
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openSearch(); }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openSearch(); return; }
+    const target = event.target;
+    const isTyping = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement || target?.isContentEditable;
+    if (event.key === '/' && !isTyping && !event.ctrlKey && !event.metaKey && !event.altKey && !dialog.open) {
+      event.preventDefault();
+      openSearch();
+    }
   });
 }
 
@@ -4836,8 +4866,28 @@ function initEditorMoreMenu() {
   });
 }
 
+function initConnectivityStatus() {
+  let lastOnline = navigator.onLine;
+  const sync = (initial = false) => {
+    const online = navigator.onLine;
+    document.documentElement.dataset.network = online ? 'online' : 'offline';
+    if (initial) {
+      if (!online) showToast('Você está offline. Conteúdos já armazenados continuam disponíveis.');
+      lastOnline = online;
+      return;
+    }
+    if (online === lastOnline) return;
+    lastOnline = online;
+    showToast(online ? 'Conexão restabelecida.' : 'Você está offline. Recursos online podem ficar indisponíveis.');
+  };
+  window.addEventListener('online', () => sync(false));
+  window.addEventListener('offline', () => sync(false));
+  sync(true);
+}
+
 function init() {
   initTheme();
+  initConnectivityStatus();
   initMobileMenu();
   initLessonMobile();
   initSearch();

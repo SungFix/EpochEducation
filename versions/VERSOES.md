@@ -1,4 +1,4 @@
-# Epoch Education — histórico completo v1 a v54
+# Epoch Education — histórico completo v1 a v55
 
 Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
 
@@ -56,3 +56,4 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v52 — RELEASE** — Playground ganhou a ação Limpar tudo para apagar HTML, CSS, JavaScript e Python de uma vez, preservando uma versão no Histórico antes da limpeza.
 - **v53 — RELEASE** — Confirmações e entradas nativas do navegador foram substituídas por diálogos próprios do Epoch Education, responsivos e alinhados aos modos Dark e Light.
 - **v54 — RELEASE** — Auditoria visual e comportamental com consolidação do diálogo de ação no CSS, fullscreen mais estável em viewport móvel, controles de cabeçalho refinados em telas estreitas e validações reforçadas de versão, cache e standalone.
+- **v55 — RELEASE** — Conveniências e correções de comportamento: navegação entre aulas sem render duplicado, busca global com atalho `/` e limpeza de pesquisas recentes, abas do Playground com estado/foco acessíveis sincronizados e avisos discretos de conexão offline/online.

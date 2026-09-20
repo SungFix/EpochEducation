@@ -108,8 +108,9 @@ const schemaSource = fs.existsSync(path.join(root,'supabase/schema.sql')) ? read
 
 if (css.lastIndexOf('Quality consolidation v47') < css.lastIndexOf('Product polish v46')) fail('Camada final de CSS v47 não preservada');
 else if (css.lastIndexOf('Feedback integration v48') < css.lastIndexOf('Quality consolidation v47')) fail('Camada de feedback v48 fora de ordem');
-else if (css.lastIndexOf('Quality audit v54') < css.lastIndexOf('Feedback integration v48')) fail('Camada final de CSS v54 não é a autoridade mais recente');
-else ok('Autoridade CSS v54 consolidada');
+else if (css.lastIndexOf('Quality audit v54') < css.lastIndexOf('Feedback integration v48')) fail('Camada v54 fora de ordem');
+else if (css.lastIndexOf('Convenience + behavior polish v55') < css.lastIndexOf('Quality audit v54')) fail('Camada final de CSS v55 não é a autoridade mais recente');
+else ok('Autoridade CSS v55 consolidada');
 if (data) {
   const tipCounts = new Map();
   for (const lesson of data.lessons || []) { const tip=String(lesson.tip || '').trim(); if (tip) tipCounts.set(tip,(tipCounts.get(tip)||0)+1); }
@@ -127,9 +128,9 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*54/.test(platformSource)) fail('Versão de backup não atualizada para v54');
+if (!/appVersion\s*:\s*55/.test(platformSource)) fail('Versão de backup não atualizada para v55');
 else ok('Versão de backup atualizada');
-const expectedPublicVersion = 54;
+const expectedPublicVersion = 55;
 const publicVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1]));
 if (publicVersionRefs.some(version => version !== expectedPublicVersion)) fail(`Referências públicas fora da v${expectedPublicVersion}: ${[...new Set(publicVersionRefs)].join(', ')}`);
 else ok(`Referências públicas alinhadas na v${expectedPublicVersion}`);
@@ -140,6 +141,14 @@ else if (!css.includes('.action-dialog')) fail('Estilo consolidado do diálogo d
 else ok('Diálogo de ação controlado pelo CSS');
 if (!css.includes('Quality audit v54') || !css.includes('100dvh')) fail('Camada final de estabilidade visual v54 ausente');
 else ok('Camada final de estabilidade visual v54 presente');
+if (!appSource.includes('function syncEditorTabs()') || !appSource.includes("tab.tabIndex = selected ? 0 : -1")) fail('Abas acessíveis do Playground incompletas');
+else ok('Abas do Playground sincronizam seleção e foco');
+if (!appSource.includes("event.key === '/'" ) || !appSource.includes('clearSearchHistory')) fail('Melhorias de busca v55 ausentes');
+else ok('Busca rápida e limpeza de histórico verificadas');
+if (!appSource.includes('function initConnectivityStatus()') || !appSource.includes("window.addEventListener('offline'")) fail('Feedback de conectividade ausente');
+else ok('Feedback de conectividade verificado');
+if (appSource.includes("location.hash = `#aula/${encodeURIComponent(id)}`;\n  if (location.hash")) fail('Navegação de aula ainda pode renderizar duas vezes');
+else ok('Navegação de aula sem renderização duplicada');
 
 for (const standaloneFile of ['Epoch-Education.html','index-standalone-preview.html']) {
   if (!fs.existsSync(path.join(root,standaloneFile))) fail(`Standalone ausente: ${standaloneFile}`);
@@ -147,7 +156,7 @@ for (const standaloneFile of ['Epoch-Education.html','index-standalone-preview.h
 if (fs.existsSync(path.join(root,'Epoch-Education.html')) && fs.existsSync(path.join(root,'index-standalone-preview.html'))) {
   const standalone = read('Epoch-Education.html');
   const previewStandalone = read('index-standalone-preview.html');
-  if (!standalone.includes('data-build="54"')) fail('Standalone oficial não foi regenerado para v54');
+  if (!standalone.includes('data-build="55"')) fail('Standalone oficial não foi regenerado para v55');
   if (standalone !== previewStandalone) fail('Standalone oficial e preview standalone divergiram');
   else ok('Standalone oficial e preview estão sincronizados');
 }

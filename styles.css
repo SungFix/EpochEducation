@@ -5186,3 +5186,22 @@ html[data-theme="light"] .feedback-body select, html[data-theme="light"] .feedba
     width:40px; height:40px; min-width:40px; min-height:40px; padding:0; justify-content:center;
   }
 }
+
+/* ==========================================================================
+   Convenience + behavior polish v55 — search, tabs and connectivity
+   ========================================================================== */
+.search-group-actions { display:inline-flex; align-items:center; gap:8px; }
+.search-clear-history {
+  min-height:28px; padding:4px 7px; border:0; border-radius:7px; background:transparent;
+  color:var(--text-4); font-size:10px; font-weight:750; text-transform:none; letter-spacing:0; cursor:pointer;
+}
+.search-clear-history:hover { background:var(--surface-2); color:var(--text); }
+.search-clear-history:focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
+
+#editorTabs [role="tab"][aria-selected="true"] { position:relative; }
+html[data-network="offline"] .runtime-dot { opacity:.55; }
+
+@media (max-width:560px) {
+  .search-hint { gap:8px 12px; }
+  .search-group-title { align-items:flex-start; }
+}
