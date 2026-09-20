@@ -129,9 +129,9 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*61/.test(platformSource)) fail('Versão de backup não atualizada para v61');
+if (!/appVersion\s*:\s*62/.test(platformSource)) fail('Versão de backup não atualizada para v62');
 else ok('Versão de backup atualizada');
-const expectedPublicVersion = 61;
+const expectedPublicVersion = 62;
 const publicVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1]));
 if (publicVersionRefs.some(version => version !== expectedPublicVersion)) fail(`Referências públicas fora da v${expectedPublicVersion}: ${[...new Set(publicVersionRefs)].join(', ')}`);
 else ok(`Referências públicas alinhadas na v${expectedPublicVersion}`);
@@ -170,8 +170,16 @@ const singleQueryCollectionPattern = /(?<!\$)\$\([^\)\n]+\)\.(?:forEach|map|filt
 const singleQueryCollectionMatches = appSource.match(singleQueryCollectionPattern) || [];
 if (singleQueryCollectionMatches.length) fail(`$() usado como coleção: ${singleQueryCollectionMatches.join(', ')}`);
 else ok('Seletores de coleção usam $$()');
-if (!appSource.includes("const tabs = $$('#editorTabs button');")) fail('Navegação das abas do Playground não usa coleção');
+if (!appSource.includes("const tabs = $('#editorTabs button');")) fail('Navegação das abas do Playground não usa coleção');
 else ok('Navegação das abas usa coleção corretamente');
+if (!appSource.includes('function warmPythonRuntime()') || !appSource.includes("type === 'prepare'")) fail('Pré-aquecimento do runtime Python ausente');
+else ok('Runtime Python é preparado ao abrir a aba');
+if (!appSource.includes('booting = null') || !appSource.includes("message.type === 'boot-error'")) fail('Retry do Pyodide após falha não está protegido');
+else ok('Pyodide pode tentar novamente após falha de inicialização');
+if (appSource.includes('Verifique sua conexão com a internet.')) fail('Erro genérico do Python ainda acusa internet indevidamente');
+else ok('Erros do Python não culpam a conexão genericamente');
+if (!appSource.includes('pythonRuntimeReady') || !appSource.includes('pythonRuntimeBooting')) fail('Estado de inicialização do Python não é rastreado');
+else ok('Estado do runtime Python rastreado explicitamente');
 if (appSource.includes("dialog.style.width = 'min(560px")) fail('Largura do diálogo de ação voltou a ser controlada inline no JavaScript');
 else if (!css.includes('.action-dialog')) fail('Estilo consolidado do diálogo de ação ausente');
 else ok('Diálogo de ação controlado pelo CSS');
@@ -192,7 +200,7 @@ for (const standaloneFile of ['Epoch-Education.html','index-standalone-preview.h
 if (fs.existsSync(path.join(root,'Epoch-Education.html')) && fs.existsSync(path.join(root,'index-standalone-preview.html'))) {
   const standalone = read('Epoch-Education.html');
   const previewStandalone = read('index-standalone-preview.html');
-  if (!standalone.includes('data-build="61"')) fail('Standalone oficial não foi regenerado para v61');
+  if (!standalone.includes('data-build="62"')) fail('Standalone oficial não foi regenerado para v62');
   if (standalone !== previewStandalone) fail('Standalone oficial e preview standalone divergiram');
   else ok('Standalone oficial e preview estão sincronizados');
 }

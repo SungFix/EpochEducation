@@ -1368,6 +1368,9 @@ let pg = { ...defaultPlayground };
 let pythonWorker = null;
 let pythonWorkerUrl = '';
 let pythonRunning = false;
+let pythonRuntimeReady = false;
+let pythonRuntimeBooting = false;
+let pythonRuntimeLastError = '';
 let pythonRunStartedAt = 0;
 let pythonRunId = 0;
 const PYODIDE_VERSION = '0.27.7';
@@ -3471,13 +3474,16 @@ function preparePythonPane() {
   tkinterLiteActive = pythonUsesTkinter($('#codeEditor')?.value || pg.python || '');
   if ($('#tkinterRuntime')) $('#tkinterRuntime').hidden = !tkinterLiteActive || !tkinterLiteSnapshot;
   syncEditorMode();
-  clearConsole(tkinterLiteActive ? 'Tkinter Web Lite pronto. Execute para gerar a interface visual; prints e erros aparecem no Console.' : 'Python pronto para executar. A primeira execução carrega o runtime pela internet.');
+  clearConsole(tkinterLiteActive ? 'Tkinter Web Lite pronto. Execute para gerar a interface visual; prints e erros aparecem no Console.' : 'Python pronto para executar. O runtime é preparado assim que você abre esta aba.');
   if ($('#pythonRuntimeText')) {
-    $('#pythonRuntimeText').textContent = pythonWorker
-      ? 'Runtime iniciado. Execute novamente quando quiser.'
-      : 'Na primeira execução, o Pyodide será carregado sob demanda. Isso pode levar alguns segundos.';
+    $('#pythonRuntimeText').textContent = pythonRuntimeReady
+      ? 'Python 3 pronto no Worker isolado.'
+      : pythonRuntimeBooting
+        ? 'Preparando Python 3 em segundo plano…'
+        : 'Preparando o runtime Python para reduzir a espera na primeira execução.';
   }
-  setRunStatus('Pronto para Python');
+  setRunStatus(pythonRuntimeReady ? 'Python pronto' : 'Preparando Python…', pythonRuntimeReady ? 'success' : 'running');
+  warmPythonRuntime();
 }
 
 let tkinterLiteActive = false;
@@ -4062,13 +4068,20 @@ function createPythonWorker() {
     const TKINTER_BOOTSTRAP = ${JSON.stringify(TKINTER_LITE_PY)};
     async function ensurePyodide() {
       if (pyodide) return pyodide;
-      if (!booting) booting = (async () => {
-        self.postMessage({type:'status', status:'loading', text:'Carregando Python 3…'});
-        importScripts(BASE + 'pyodide.js');
-        pyodide = await loadPyodide({ indexURL: BASE });
-        self.postMessage({type:'status', status:'ready', text:'Python pronto'});
-        return pyodide;
-      })();
+      if (!booting) {
+        booting = (async () => {
+          self.postMessage({type:'status', status:'loading', phase:'loader', text:'Baixando carregador do Python…'});
+          importScripts(BASE + 'pyodide.js');
+          self.postMessage({type:'status', status:'loading', phase:'runtime', text:'Inicializando Python 3…'});
+          pyodide = await loadPyodide({ indexURL: BASE });
+          self.postMessage({type:'status', status:'ready', phase:'ready', text:'Python pronto'});
+          return pyodide;
+        })().catch(error => {
+          booting = null;
+          pyodide = null;
+          throw error;
+        });
+      }
       return booting;
     }
     async function ensureTkinterLite(runtime) {
@@ -4085,6 +4098,15 @@ function createPythonWorker() {
     }
     self.onmessage = async event => {
       const type = event.data?.type;
+      if (type === 'prepare') {
+        try {
+          await ensurePyodide();
+          self.postMessage({type:'prepared'});
+        } catch (error) {
+          self.postMessage({type:'boot-error', text:error?.message || String(error)});
+        }
+        return;
+      }
       if (type === 'tk-event') {
         const runId = event.data.runId;
         try {
@@ -4133,10 +4155,34 @@ function createPythonWorker() {
   pythonWorker = new Worker(pythonWorkerUrl);
   pythonWorker.addEventListener('message', handlePythonWorkerMessage);
   pythonWorker.addEventListener('error', event => {
-    appendConsole('error', `Não foi possível iniciar o Python: ${event.message || 'erro ao carregar o runtime'}. Verifique sua conexão com a internet.`);
-    finishPythonRun(true);
+    pythonRuntimeBooting = false;
+    pythonRuntimeReady = false;
+    pythonRuntimeLastError = event.message || 'erro interno do Worker';
+    const networkHint = navigator.onLine === false
+      ? ' O navegador está sinalizando modo offline.'
+      : ' A conexão pode estar funcionando; este erro também pode vir do CDN, cache, WebAssembly ou do próprio Worker.';
+    appendConsole('error', `Não foi possível iniciar o runtime Python: ${pythonRuntimeLastError}.${networkHint}`);
+    if (pythonRunning) finishPythonRun(true);
+    else {
+      setRunStatus('Falha ao preparar Python', 'error');
+      if ($('#pythonRuntimeText')) $('#pythonRuntimeText').textContent = 'Falha ao preparar o runtime. Execute novamente para tentar de novo.';
+    }
   });
   return pythonWorker;
+}
+
+function warmPythonRuntime() {
+  if (pythonRuntimeReady || pythonRuntimeBooting || pythonRunning) return;
+  pythonRuntimeBooting = true;
+  pythonRuntimeLastError = '';
+  try {
+    createPythonWorker().postMessage({ type:'prepare' });
+  } catch (error) {
+    pythonRuntimeBooting = false;
+    pythonRuntimeLastError = error?.message || String(error);
+    appendConsole('error', `Não foi possível preparar o Python: ${pythonRuntimeLastError}`);
+    setRunStatus('Falha ao preparar Python', 'error');
+  }
 }
 
 function runPythonPlayground() {
@@ -4154,11 +4200,13 @@ function runPythonPlayground() {
   pythonRunStartedAt = performance.now();
   pythonRunId += 1;
   syncEditorMode();
-  setRunStatus(pythonWorker ? (tkinterLiteActive ? 'Executando Tkinter…' : 'Executando Python…') : 'Carregando Python…', 'running');
+  setRunStatus(pythonRuntimeReady ? (tkinterLiteActive ? 'Executando Tkinter…' : 'Executando Python…') : 'Preparando Python…', 'running');
   if ($('#pythonRuntimeText')) {
-    $('#pythonRuntimeText').textContent = pythonWorker
+    $('#pythonRuntimeText').textContent = pythonRuntimeReady
       ? 'Executando no Worker isolado…'
-      : 'Carregando o runtime Python. A primeira execução é a mais demorada.';
+      : pythonRuntimeBooting
+        ? 'Finalizando a preparação do Python 3…'
+        : 'Carregando o runtime Python pela primeira vez…';
   }
   if (tkinterLiteActive && $('#tkinterRuntime')) {
     $('#tkinterRuntime').hidden = false;
@@ -4176,8 +4224,39 @@ function handlePythonWorkerMessage(event) {
   const message = event.data || {};
   if (message.runId && message.runId !== pythonRunId) return;
   if (message.type === 'status') {
+    if (message.status === 'ready') {
+      pythonRuntimeReady = true;
+      pythonRuntimeBooting = false;
+      pythonRuntimeLastError = '';
+    } else if (message.status === 'loading') {
+      pythonRuntimeBooting = true;
+    }
     setRunStatus(message.text || 'Processando…', message.status === 'ready' ? 'success' : 'running');
     if ($('#pythonRuntimeText')) $('#pythonRuntimeText').textContent = message.text || 'Python em execução.';
+    return;
+  }
+  if (message.type === 'prepared') {
+    pythonRuntimeReady = true;
+    pythonRuntimeBooting = false;
+    pythonRuntimeLastError = '';
+    if (!pythonRunning) {
+      setRunStatus('Python pronto', 'success');
+      if ($('#pythonRuntimeText')) $('#pythonRuntimeText').textContent = 'Python 3 pronto. A primeira execução agora deve iniciar mais rápido.';
+    }
+    return;
+  }
+  if (message.type === 'boot-error') {
+    pythonRuntimeReady = false;
+    pythonRuntimeBooting = false;
+    pythonRuntimeLastError = message.text || 'Falha ao carregar o runtime';
+    const hint = navigator.onLine === false
+      ? 'O navegador está sinalizando modo offline.'
+      : 'Sua internet pode estar normal; o carregamento do CDN ou do WebAssembly falhou.';
+    appendConsole('error', `Falha ao preparar Python: ${cleanPythonError(pythonRuntimeLastError)}\n${hint} Tente executar novamente.`);
+    if (!pythonRunning) {
+      setRunStatus('Falha ao preparar Python', 'error');
+      if ($('#pythonRuntimeText')) $('#pythonRuntimeText').textContent = 'Não foi possível preparar o runtime. Execute novamente para tentar de novo.';
+    }
     return;
   }
   if (message.type === 'stdout') appendConsole('log', message.text || '');
@@ -4216,6 +4295,9 @@ function stopPythonExecution() {
   if (pythonWorkerUrl) URL.revokeObjectURL(pythonWorkerUrl);
   pythonWorkerUrl = '';
   pythonRunning = false;
+  pythonRuntimeReady = false;
+  pythonRuntimeBooting = false;
+  pythonRuntimeLastError = '';
   syncEditorMode();
   appendConsole('warn', 'Execução interrompida pelo usuário.');
   setRunStatus('Interrompido', 'error');
