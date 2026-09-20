@@ -109,8 +109,9 @@ const schemaSource = fs.existsSync(path.join(root,'supabase/schema.sql')) ? read
 if (css.lastIndexOf('Quality consolidation v47') < css.lastIndexOf('Product polish v46')) fail('Camada final de CSS v47 não preservada');
 else if (css.lastIndexOf('Feedback integration v48') < css.lastIndexOf('Quality consolidation v47')) fail('Camada de feedback v48 fora de ordem');
 else if (css.lastIndexOf('Quality audit v54') < css.lastIndexOf('Feedback integration v48')) fail('Camada v54 fora de ordem');
-else if (css.lastIndexOf('Convenience + behavior polish v55') < css.lastIndexOf('Quality audit v54')) fail('Camada final de CSS v55 não é a autoridade mais recente');
-else ok('Autoridade CSS v55 consolidada');
+else if (css.lastIndexOf('Convenience + behavior polish v55') < css.lastIndexOf('Quality audit v54')) fail('Camada v55 fora de ordem');
+else if (css.lastIndexOf('Legibility + focus polish v57') < css.lastIndexOf('Convenience + behavior polish v55')) fail('Camada final de CSS v57 não é a autoridade mais recente');
+else ok('Autoridade CSS v57 consolidada');
 if (data) {
   const tipCounts = new Map();
   for (const lesson of data.lessons || []) { const tip=String(lesson.tip || '').trim(); if (tip) tipCounts.set(tip,(tipCounts.get(tip)||0)+1); }
@@ -128,9 +129,9 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*56/.test(platformSource)) fail('Versão de backup não atualizada para v56');
+if (!/appVersion\s*:\s*57/.test(platformSource)) fail('Versão de backup não atualizada para v57');
 else ok('Versão de backup atualizada');
-const expectedPublicVersion = 56;
+const expectedPublicVersion = 57;
 const publicVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1]));
 if (publicVersionRefs.some(version => version !== expectedPublicVersion)) fail(`Referências públicas fora da v${expectedPublicVersion}: ${[...new Set(publicVersionRefs)].join(', ')}`);
 else ok(`Referências públicas alinhadas na v${expectedPublicVersion}`);
@@ -151,6 +152,10 @@ if (!/<button[^>]+id=["']resetPlayground["'][^>]+type=["']button["']/i.test(html
 else ok('Controles de busca e Playground com semântica acessível');
 if (!appSource.includes("systemTheme?.addEventListener?.('change'") || !appSource.includes("if (state.theme === 'dark' || state.theme === 'light') return;")) fail('Tema automático não acompanha mudanças do sistema');
 else ok('Tema automático acompanha preferência do sistema sem sobrescrever escolha manual');
+if (!platformSource.includes('const previousProjects = await listSavedCodeProjects();') || !platformSource.includes('await replaceSavedCodeProjects(previousProjects)')) fail('Restauração de backup sem rollback de projetos');
+else ok('Restauração de backup possui rollback de estado e projetos');
+if (!css.includes('summary:focus-visible') || !css.includes('Legibility + focus polish v57')) fail('Foco visível/legibilidade v57 ausentes');
+else ok('Foco visível e legibilidade v57 presentes');
 if (appSource.includes("dialog.style.width = 'min(560px")) fail('Largura do diálogo de ação voltou a ser controlada inline no JavaScript');
 else if (!css.includes('.action-dialog')) fail('Estilo consolidado do diálogo de ação ausente');
 else ok('Diálogo de ação controlado pelo CSS');
@@ -171,7 +176,7 @@ for (const standaloneFile of ['Epoch-Education.html','index-standalone-preview.h
 if (fs.existsSync(path.join(root,'Epoch-Education.html')) && fs.existsSync(path.join(root,'index-standalone-preview.html'))) {
   const standalone = read('Epoch-Education.html');
   const previewStandalone = read('index-standalone-preview.html');
-  if (!standalone.includes('data-build="56"')) fail('Standalone oficial não foi regenerado para v56');
+  if (!standalone.includes('data-build="57"')) fail('Standalone oficial não foi regenerado para v57');
   if (standalone !== previewStandalone) fail('Standalone oficial e preview standalone divergiram');
   else ok('Standalone oficial e preview estão sincronizados');
 }

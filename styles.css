@@ -5205,3 +5205,37 @@ html[data-network="offline"] .runtime-dot { opacity:.55; }
   .search-hint { gap:8px 12px; }
   .search-group-title { align-items:flex-start; }
 }
+
+/* ==========================================================================
+   Legibility + focus polish v57
+   ========================================================================== */
+summary:focus-visible {
+  outline:2px solid var(--focus);
+  outline-offset:3px;
+}
+
+/* Raise very small metadata text without changing the information hierarchy. */
+.preset-trigger-copy small,
+.search-result-type,
+.exercise-list-toggle small,
+.project-readiness-courses span,
+.playground-history-item small,
+.editor-suggestion-kind,
+.saved-code-card-copy > small,
+.smart-learning-row-copy small,
+.progress-activity-item small,
+.roadmap-course-tab small,
+.roadmap-node-copy small,
+.track-course-stats small {
+  font-size:10px;
+}
+.saved-code-current-badge,
+.saved-code-lang { font-size:10px; }
+.saved-code-card-actions .text-button,
+.saved-codes-footer > span { font-size:10.5px; }
+
+@media (pointer: coarse) {
+  .button.compact,
+  .saved-code-card-actions .button,
+  .saved-code-card-actions .text-button { min-height:40px; }
+}

@@ -1,4 +1,4 @@
-/* Epoch Education — platform features v56
+/* Epoch Education — platform features v57
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -131,7 +131,7 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:56,
+    appVersion:57,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
@@ -139,9 +139,25 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
 async function restoreEnterpriseBackupPayload(payload, { confirmReplace = true, reload = true } = {}) {
   if (payload?.format !== 'enterprise-educacional-backup' || !payload.state || typeof payload.state !== 'object') throw new Error('Backup inválido.');
   if (confirmReplace && !await eeConfirm('O progresso, notas, histórico e projetos salvos deste dispositivo serão substituídos.', { title:'Restaurar dados?', confirmLabel:'Restaurar', tone:'danger' })) return false;
-  localStorage.setItem(storageKey, JSON.stringify(payload.state));
-  localStorage.removeItem(legacyStorageKey);
-  await replaceSavedCodeProjects(Array.isArray(payload.savedProjects) ? payload.savedProjects : []);
+
+  const previousState = localStorage.getItem(storageKey);
+  const previousLegacyState = localStorage.getItem(legacyStorageKey);
+  const previousProjects = await listSavedCodeProjects();
+  const nextProjects = Array.isArray(payload.savedProjects) ? payload.savedProjects : [];
+
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(payload.state));
+    localStorage.removeItem(legacyStorageKey);
+    await replaceSavedCodeProjects(nextProjects);
+  } catch (error) {
+    if (previousState === null) localStorage.removeItem(storageKey);
+    else localStorage.setItem(storageKey, previousState);
+    if (previousLegacyState === null) localStorage.removeItem(legacyStorageKey);
+    else localStorage.setItem(legacyStorageKey, previousLegacyState);
+    try { await replaceSavedCodeProjects(previousProjects); } catch {}
+    throw error;
+  }
+
   if (reload) setTimeout(() => location.reload(), 450);
   return true;
 }
@@ -322,7 +338,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=56').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=57').catch(() => {});
   }
   renderPwaStatus();
 }
