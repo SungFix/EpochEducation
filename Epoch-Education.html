@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="60">
+<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="61">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8649,7 +8649,7 @@ function initPlayground() {
 
   $$('#editorTabs button').forEach(button => button.addEventListener('click', () => selectEditorTab(button.dataset.lang)));
   $('#editorTabs')?.addEventListener('keydown', event => {
-    const tabs = $('#editorTabs button');
+    const tabs = $$('#editorTabs button');
     const focusedIndex = tabs.indexOf(event.target.closest('button'));
     const selectedIndex = tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true');
     const index = focusedIndex >= 0 ? focusedIndex : Math.max(0, selectedIndex);
@@ -8887,7 +8887,7 @@ function languageLabel(lang) {
 }
 
 function syncEditorTabs() {
-  $('#editorTabs button').forEach(tab => {
+  $$('#editorTabs button').forEach(tab => {
     const selected = tab.dataset.lang === activeLang;
     tab.setAttribute('aria-selected', String(selected));
     tab.tabIndex = selected ? 0 : -1;
@@ -10205,7 +10205,7 @@ function renderSearch(query) {
       { label:'Abrir Playground', href:'#playground', meta:'Testar código' }
     ].filter(Boolean);
     resultHost.innerHTML = `${recent.length ? `<section class="search-start-section"><div class="search-group-title"><span>Pesquisas recentes</span><span class="search-group-actions"><small>${recent.length}</small><button class="search-clear-history" id="clearSearchHistory" type="button">Limpar</button></span></div><div class="search-history-chips">${recent.map(item => `<button class="search-history-chip" type="button" data-search-history="${escapeAttr(item)}"><svg class="ui-icon" aria-hidden="true"><use href="#icon-clock"></use></svg>${escapeHtml(item)}</button>`).join('')}</div></section>` : ''}<section class="search-start-section"><div class="search-group-title"><span>Atalhos</span><small>3</small></div><div class="search-shortcuts">${recommended.map(item => `<a href="${item.href}" class="search-shortcut"><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.meta)}</small></span><span aria-hidden="true">→</span></a>`).join('')}</div></section>`;
-    $('[data-search-history]', resultHost).forEach(button => button.addEventListener('click', () => { input.value = button.dataset.searchHistory; searchExpandedGroups.clear(); renderSearch(input.value); input.focus(); }));
+    $$('[data-search-history]', resultHost).forEach(button => button.addEventListener('click', () => { input.value = button.dataset.searchHistory; searchExpandedGroups.clear(); renderSearch(input.value); input.focus(); }));
     $('#clearSearchHistory', resultHost)?.addEventListener('click', () => {
       state.searchHistory = [];
       saveState();
@@ -10214,7 +10214,7 @@ function renderSearch(query) {
       input.focus();
       showToast('Pesquisas recentes limpas.');
     });
-    $('.search-shortcut', resultHost).forEach(link => link.addEventListener('click', () => $('#searchDialog')?.close()));
+    $$('.search-shortcut', resultHost).forEach(link => link.addEventListener('click', () => $('#searchDialog')?.close()));
     return;
   }
 
@@ -10566,7 +10566,7 @@ function init() {
 
 </script>
   <script>
-/* Epoch Education — platform features v60
+/* Epoch Education — platform features v61
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -10699,7 +10699,7 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:60,
+    appVersion:61,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
@@ -10906,7 +10906,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=60').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=61').catch(() => {});
   }
   renderPwaStatus();
 }
