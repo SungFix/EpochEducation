@@ -128,14 +128,29 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*55/.test(platformSource)) fail('Versão de backup não atualizada para v55');
+if (!/appVersion\s*:\s*56/.test(platformSource)) fail('Versão de backup não atualizada para v56');
 else ok('Versão de backup atualizada');
-const expectedPublicVersion = 55;
+const expectedPublicVersion = 56;
 const publicVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1]));
 if (publicVersionRefs.some(version => version !== expectedPublicVersion)) fail(`Referências públicas fora da v${expectedPublicVersion}: ${[...new Set(publicVersionRefs)].join(', ')}`);
 else ok(`Referências públicas alinhadas na v${expectedPublicVersion}`);
 if (!workerSource.includes(`epoch-education-shell-v${expectedPublicVersion}`) || !workerSource.includes(`epoch-education-runtime-v${expectedPublicVersion}`)) fail('Caches do Service Worker fora da versão pública atual');
 else ok('Caches do Service Worker alinhados com a versão pública');
+const versionedShellRefs = [...new Set([...html.matchAll(/(?:src|href|data-dark-src|data-light-src|data-dark-href|data-light-href)="([^"#?]+\?v=\d+)"/g)].map(match => match[1]))];
+for (const ref of versionedShellRefs) {
+  const shellRef = ref.startsWith('./') ? ref : `./${ref}`;
+  if (!workerSource.includes(shellRef)) fail(`Asset versionado do HTML ausente do shell offline: ${ref}`);
+}
+if (versionedShellRefs.length) ok(`${versionedShellRefs.length} assets versionados do HTML alinhados com o shell offline`);
+
+for (const id of ['lessonNavSearch','glossarySearch']) {
+  const pattern = new RegExp(`<input[^>]+id=["']${id}["'][^>]+aria-label=["'][^"']+["']`, 'i');
+  if (!pattern.test(html)) fail(`Campo de busca sem nome acessível: ${id}`);
+}
+if (!/<button[^>]+id=["']resetPlayground["'][^>]+type=["']button["']/i.test(html)) fail('Botão Restaurar do Playground sem type=button explícito');
+else ok('Controles de busca e Playground com semântica acessível');
+if (!appSource.includes("systemTheme?.addEventListener?.('change'") || !appSource.includes("if (state.theme === 'dark' || state.theme === 'light') return;")) fail('Tema automático não acompanha mudanças do sistema');
+else ok('Tema automático acompanha preferência do sistema sem sobrescrever escolha manual');
 if (appSource.includes("dialog.style.width = 'min(560px")) fail('Largura do diálogo de ação voltou a ser controlada inline no JavaScript');
 else if (!css.includes('.action-dialog')) fail('Estilo consolidado do diálogo de ação ausente');
 else ok('Diálogo de ação controlado pelo CSS');
@@ -156,7 +171,7 @@ for (const standaloneFile of ['Epoch-Education.html','index-standalone-preview.h
 if (fs.existsSync(path.join(root,'Epoch-Education.html')) && fs.existsSync(path.join(root,'index-standalone-preview.html'))) {
   const standalone = read('Epoch-Education.html');
   const previewStandalone = read('index-standalone-preview.html');
-  if (!standalone.includes('data-build="55"')) fail('Standalone oficial não foi regenerado para v55');
+  if (!standalone.includes('data-build="56"')) fail('Standalone oficial não foi regenerado para v56');
   if (standalone !== previewStandalone) fail('Standalone oficial e preview standalone divergiram');
   else ok('Standalone oficial e preview estão sincronizados');
 }

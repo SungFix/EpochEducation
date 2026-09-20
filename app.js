@@ -4707,7 +4707,12 @@ function applyTheme(theme, { animate = false } = {}) {
 }
 
 function initTheme() {
+  const systemTheme = window.matchMedia?.('(prefers-color-scheme: light)');
   applyTheme(resolveTheme(), { animate: false });
+  systemTheme?.addEventListener?.('change', event => {
+    if (state.theme === 'dark' || state.theme === 'light') return;
+    applyTheme(event.matches ? 'light' : 'dark', { animate: true });
+  });
   $('#themeToggle').addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     state.theme = next;

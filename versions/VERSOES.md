@@ -1,4 +1,4 @@
-# Epoch Education — histórico completo v1 a v55
+# Epoch Education — histórico completo v1 a v56
 
 Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
 
@@ -57,3 +57,4 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v53 — RELEASE** — Confirmações e entradas nativas do navegador foram substituídas por diálogos próprios do Epoch Education, responsivos e alinhados aos modos Dark e Light.
 - **v54 — RELEASE** — Auditoria visual e comportamental com consolidação do diálogo de ação no CSS, fullscreen mais estável em viewport móvel, controles de cabeçalho refinados em telas estreitas e validações reforçadas de versão, cache e standalone.
 - **v55 — RELEASE** — Conveniências e correções de comportamento: navegação entre aulas sem render duplicado, busca global com atalho `/` e limpeza de pesquisas recentes, abas do Playground com estado/foco acessíveis sincronizados e avisos discretos de conexão offline/online.
+- **v56 — RELEASE** — Auditoria aprofundada de PWA e acessibilidade: shell offline passou a pré-cachear exatamente os assets versionados usados pelo HTML, evitando perda de logo/favicons offline; validação CI cobre essa coerência; buscas ganharam nomes acessíveis explícitos; botão Restaurar do Playground recebeu semântica segura; e o tema automático acompanha mudanças do sistema até o usuário escolher um tema manualmente.

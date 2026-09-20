@@ -20,9 +20,9 @@
       } catch {}
     })();
   </script>
-  <link id="favicon32" rel="icon" type="image/png" sizes="32x32" href="assets/branding/favicon-32.png?v=55" data-dark-href="assets/branding/favicon-32.png?v=55" data-light-href="assets/branding/favicon-light-32.png?v=55" />
-  <link id="favicon16" rel="icon" type="image/png" sizes="16x16" href="assets/branding/favicon-16.png?v=55" data-dark-href="assets/branding/favicon-16.png?v=55" data-light-href="assets/branding/favicon-light-16.png?v=55" />
-  <link id="appleTouchIcon" rel="apple-touch-icon" sizes="180x180" href="assets/branding/apple-touch-icon.png?v=55" data-dark-href="assets/branding/apple-touch-icon.png?v=55" data-light-href="assets/branding/apple-touch-icon-light.png?v=55" />
+  <link id="favicon32" rel="icon" type="image/png" sizes="32x32" href="assets/branding/favicon-32.png?v=56" data-dark-href="assets/branding/favicon-32.png?v=56" data-light-href="assets/branding/favicon-light-32.png?v=56" />
+  <link id="favicon16" rel="icon" type="image/png" sizes="16x16" href="assets/branding/favicon-16.png?v=56" data-dark-href="assets/branding/favicon-16.png?v=56" data-light-href="assets/branding/favicon-light-16.png?v=56" />
+  <link id="appleTouchIcon" rel="apple-touch-icon" sizes="180x180" href="assets/branding/apple-touch-icon.png?v=56" data-dark-href="assets/branding/apple-touch-icon.png?v=56" data-light-href="assets/branding/apple-touch-icon-light.png?v=56" />
   <script>
     (() => {
       const theme = document.documentElement.dataset.theme;
@@ -32,16 +32,16 @@
         if (el) el.href = isLight ? lightHref : darkHref;
       };
       setTimeout(() => {
-        setHref('favicon32', 'assets/branding/favicon-32.png?v=55', 'assets/branding/favicon-light-32.png?v=55');
-        setHref('favicon16', 'assets/branding/favicon-16.png?v=55', 'assets/branding/favicon-light-16.png?v=55');
-        setHref('appleTouchIcon', 'assets/branding/apple-touch-icon.png?v=55', 'assets/branding/apple-touch-icon-light.png?v=55');
+        setHref('favicon32', 'assets/branding/favicon-32.png?v=56', 'assets/branding/favicon-light-32.png?v=56');
+        setHref('favicon16', 'assets/branding/favicon-16.png?v=56', 'assets/branding/favicon-light-16.png?v=56');
+        setHref('appleTouchIcon', 'assets/branding/apple-touch-icon.png?v=56', 'assets/branding/apple-touch-icon-light.png?v=56');
       }, 0);
     })();
   </script>
-  <link rel="manifest" href="manifest.webmanifest?v=55" />
+  <link rel="manifest" href="manifest.webmanifest?v=56" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="stylesheet" href="styles.css?v=55" />
+  <link rel="stylesheet" href="styles.css?v=56" />
 </head>
 <body>
   <svg class="icon-sprite" aria-hidden="true" focusable="false">
@@ -89,7 +89,7 @@
   <header class="site-header" id="siteHeader">
     <div class="shell header-inner">
       <a class="brand" href="#home" aria-label="Epoch Education — início">
-        <span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=55" data-dark-src="assets/branding/enterprise-symbol.png?v=55" data-light-src="assets/branding/enterprise-symbol-light.png?v=55" alt="" /></span>
+        <span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=56" data-dark-src="assets/branding/enterprise-symbol.png?v=56" data-light-src="assets/branding/enterprise-symbol-light.png?v=56" alt="" /></span>
         <span class="brand-name">Epoch Education</span>
       </a>
 
@@ -196,7 +196,7 @@
           <button class="lesson-mobile-toggle" id="lessonMobileToggle" type="button" aria-expanded="false"><span>Conteúdo do curso</span><svg class="ui-icon"><use href="#icon-chevron-down"></use></svg></button>
           <div class="lesson-sidebar-body" id="lessonSidebarBody">
             <div class="sidebar-heading"><span class="eyebrow simple" id="lessonCourseCode">Curso</span><h2 id="lessonCourseTitle">Conteúdo</h2><p id="lessonModuleLabel"></p></div>
-            <label class="lesson-nav-search" for="lessonNavSearch"><svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="lessonNavSearch" type="search" placeholder="Buscar aula neste curso..." autocomplete="off" /></label>
+            <label class="lesson-nav-search" for="lessonNavSearch"><svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="lessonNavSearch" type="search" aria-label="Buscar aula neste curso" placeholder="Buscar aula neste curso..." autocomplete="off" /></label>
             <nav id="lessonNav" class="lesson-nav"></nav>
             <div class="sidebar-progress"><div class="progress-label"><span>Progresso da trilha</span><strong id="lessonCoursePercent">0%</strong></div><div class="progress"><span id="lessonCourseBar"></span></div></div>
           </div>
@@ -213,7 +213,7 @@
 
     <section class="page" data-page="playground" id="playground">
       <div class="shell playground-shell">
-        <div class="page-header split compact-bottom"><div><span class="eyebrow simple">Laboratório de código</span><h1>Playground</h1><p>Programe em HTML, CSS, JavaScript e Python. Visualize páginas, acompanhe o console e execute Python 3 diretamente no navegador.</p></div><div class="playground-actions"><div class="preset-picker" id="presetPicker"><button class="preset-trigger" id="presetTrigger" type="button" aria-expanded="false" aria-controls="presetMenu"><span class="preset-trigger-icon" aria-hidden="true"><svg class="ui-icon"><use href="#icon-playground"></use></svg></span><span class="preset-trigger-copy"><small>Modelo</small><strong id="presetCurrentLabel">Exemplo inicial</strong></span><svg class="ui-icon preset-chevron" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></button><div class="preset-menu" id="presetMenu" hidden><div class="preset-menu-head"><div><span class="detail-kicker">Comece mais rápido</span><strong>Modelos de código</strong><p>Escolha uma base pronta para estudar, testar ou modificar.</p></div></div><div class="preset-options" id="presetOptions"></div></div><select id="playgroundPreset" hidden aria-hidden="true"></select></div><button class="button secondary" id="resetPlayground" title="Restaurar o código do modelo atual">Restaurar</button></div></div>
+        <div class="page-header split compact-bottom"><div><span class="eyebrow simple">Laboratório de código</span><h1>Playground</h1><p>Programe em HTML, CSS, JavaScript e Python. Visualize páginas, acompanhe o console e execute Python 3 diretamente no navegador.</p></div><div class="playground-actions"><div class="preset-picker" id="presetPicker"><button class="preset-trigger" id="presetTrigger" type="button" aria-expanded="false" aria-controls="presetMenu"><span class="preset-trigger-icon" aria-hidden="true"><svg class="ui-icon"><use href="#icon-playground"></use></svg></span><span class="preset-trigger-copy"><small>Modelo</small><strong id="presetCurrentLabel">Exemplo inicial</strong></span><svg class="ui-icon preset-chevron" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></button><div class="preset-menu" id="presetMenu" hidden><div class="preset-menu-head"><div><span class="detail-kicker">Comece mais rápido</span><strong>Modelos de código</strong><p>Escolha uma base pronta para estudar, testar ou modificar.</p></div></div><div class="preset-options" id="presetOptions"></div></div><select id="playgroundPreset" hidden aria-hidden="true"></select></div><button class="button secondary" id="resetPlayground" type="button" title="Restaurar o código do modelo atual">Restaurar</button></div></div>
         <div class="playground-runtime-note"><span class="runtime-dot"></span><strong>Execução segura</strong><span>Web em iframe sandbox · Python em Web Worker com Pyodide carregado sob demanda</span></div>
         <div class="workbench" id="workbench">
           <section class="editor-pane">
@@ -235,7 +235,7 @@
       </div>
     </section>
 
-    <section class="page" data-page="glossario" id="glossario"><div class="shell page-shell"><div class="page-header"><span class="eyebrow simple">Conceitos sem complicação</span><h1>Glossário</h1><p>Definições curtas, explicações e conexões com as aulas em que cada conceito aparece.</p></div><div class="glossary-layout"><div class="glossary-list-panel"><div class="glossary-controls"><label class="search-field"><svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="glossarySearch" type="search" placeholder="Buscar conceito, linguagem ou termo..." /></label><section class="glossary-filter-group" aria-labelledby="glossaryCategoryLabel"><div class="glossary-filter-heading"><span id="glossaryCategoryLabel">Categoria</span></div><div class="glossary-categories" id="glossaryCategories" aria-label="Categorias do glossário"></div></section><section class="glossary-filter-group glossary-letter-group" aria-labelledby="glossaryLetterLabel"><div class="glossary-filter-heading"><span id="glossaryLetterLabel">Inicial</span><span class="glossary-result-meta" id="glossaryResultMeta"></span></div><div class="alphabet" id="alphabet" aria-label="Filtrar glossário por letra"></div></section></div><div class="glossary-list" id="glossaryList"></div></div><article class="glossary-detail" id="glossaryDetail"></article></div></div></section>
+    <section class="page" data-page="glossario" id="glossario"><div class="shell page-shell"><div class="page-header"><span class="eyebrow simple">Conceitos sem complicação</span><h1>Glossário</h1><p>Definições curtas, explicações e conexões com as aulas em que cada conceito aparece.</p></div><div class="glossary-layout"><div class="glossary-list-panel"><div class="glossary-controls"><label class="search-field"><svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="glossarySearch" type="search" aria-label="Buscar no glossário" placeholder="Buscar conceito, linguagem ou termo..." autocomplete="off" /></label><section class="glossary-filter-group" aria-labelledby="glossaryCategoryLabel"><div class="glossary-filter-heading"><span id="glossaryCategoryLabel">Categoria</span></div><div class="glossary-categories" id="glossaryCategories" aria-label="Categorias do glossário"></div></section><section class="glossary-filter-group glossary-letter-group" aria-labelledby="glossaryLetterLabel"><div class="glossary-filter-heading"><span id="glossaryLetterLabel">Inicial</span><span class="glossary-result-meta" id="glossaryResultMeta"></span></div><div class="alphabet" id="alphabet" aria-label="Filtrar glossário por letra"></div></section></div><div class="glossary-list" id="glossaryList"></div></div><article class="glossary-detail" id="glossaryDetail"></article></div></div></section>
 
     <section class="page" data-page="progresso" id="progresso">
       <div class="shell page-shell progress-page-shell">
@@ -299,12 +299,12 @@
   </main>
 
   <footer class="site-footer">
-    <div class="shell footer-grid"><div class="footer-brand"><a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=55" data-dark-src="assets/branding/enterprise-symbol.png?v=55" data-light-src="assets/branding/enterprise-symbol-light.png?v=55" alt="" /></span><span class="brand-name">Epoch Education</span></a><p>Aprenda programação na prática, do primeiro conceito aos seus próprios projetos.</p></div><div><h2>Aprender</h2><a href="#trilhas">Trilhas</a><a href="#exercicios">Exercícios</a><a href="#desafios">Desafios</a><a href="#projetos">Projetos</a></div><div><h2>Ferramentas</h2><a href="#playground">Playground</a><a href="#glossario">Glossário</a><a href="#progresso">Progresso</a><button class="footer-link-button" id="openFeedback" type="button">Enviar feedback</button></div></div>
+    <div class="shell footer-grid"><div class="footer-brand"><a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=56" data-dark-src="assets/branding/enterprise-symbol.png?v=56" data-light-src="assets/branding/enterprise-symbol-light.png?v=56" alt="" loading="lazy" decoding="async" /></span><span class="brand-name">Epoch Education</span></a><p>Aprenda programação na prática, do primeiro conceito aos seus próprios projetos.</p></div><div><h2>Aprender</h2><a href="#trilhas">Trilhas</a><a href="#exercicios">Exercícios</a><a href="#desafios">Desafios</a><a href="#projetos">Projetos</a></div><div><h2>Ferramentas</h2><a href="#playground">Playground</a><a href="#glossario">Glossário</a><a href="#progresso">Progresso</a><button class="footer-link-button" id="openFeedback" type="button">Enviar feedback</button></div></div>
     <div class="shell footer-bottom"><span>© 2026 Epoch Education</span><span>Design, código e prática no mesmo lugar.</span></div>
   </footer>
 
   <dialog class="search-dialog" id="searchDialog" aria-label="Busca global">
-    <form method="dialog" class="search-modal"><div class="search-modal-head"><label class="search-field modal-search"><svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="globalSearch" type="search" aria-label="Buscar no Epoch Education" placeholder="Buscar aulas, módulos, exercícios, projetos..." autocomplete="off" /></label><button class="icon-button" value="cancel" aria-label="Fechar busca"><svg class="ui-icon" aria-hidden="true"><use href="#icon-close"></use></svg></button></div><div class="search-results" id="searchResults"></div><div class="search-hint"><span><kbd>Ctrl/⌘ K</kbd> ou <kbd>/</kbd> buscar</span><span><kbd>↑↓</kbd> navegar</span><span><kbd>Enter</kbd> abrir</span><span><kbd>Esc</kbd> fechar</span></div></form>
+    <form method="dialog" class="search-modal"><div class="search-modal-head"><label class="search-field modal-search"><svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="globalSearch" type="search" aria-label="Buscar no Epoch Education" placeholder="Buscar aulas, módulos, exercícios, projetos..." autocomplete="off" /></label><button class="icon-button" type="submit" value="cancel" aria-label="Fechar busca"><svg class="ui-icon" aria-hidden="true"><use href="#icon-close"></use></svg></button></div><div class="search-results" id="searchResults"></div><div class="search-hint"><span><kbd>Ctrl/⌘ K</kbd> ou <kbd>/</kbd> buscar</span><span><kbd>↑↓</kbd> navegar</span><span><kbd>Enter</kbd> abrir</span><span><kbd>Esc</kbd> fechar</span></div></form>
   </dialog>
 
   <dialog class="saved-code-dialog" id="saveCodeDialog" aria-labelledby="saveCodeDialogTitle">
@@ -385,9 +385,9 @@
 
   <div class="toast-region" id="toastRegion" role="status" aria-live="polite" aria-atomic="false"></div>
 
-  <script src="content-data.js?v=55"></script>
-  <script src="app.js?v=55"></script>
-  <script src="platform-features.js?v=55"></script>
-  <script src="bootstrap.js?v=55"></script>
+  <script src="content-data.js?v=56"></script>
+  <script src="app.js?v=56"></script>
+  <script src="platform-features.js?v=56"></script>
+  <script src="bootstrap.js?v=56"></script>
 </body>
 </html>
