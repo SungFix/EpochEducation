@@ -4113,7 +4113,7 @@ function createPythonWorker() {
           const runtime = await ensurePyodide();
           runtime.globals.set('__ee_tk_values_json', JSON.stringify(event.data.values || {}));
           runtime.globals.set('__ee_tk_widget_id', String(event.data.widgetId || ''));
-          await runtime.runPythonAsync('__ee_tk_apply_values(__ee_tk_values_json)\n__ee_tk_invoke(__ee_tk_widget_id)');
+          await runtime.runPythonAsync('__ee_tk_apply_values(__ee_tk_values_json)\\n__ee_tk_invoke(__ee_tk_widget_id)');
           snapshotTkinter(runtime, runId);
           self.postMessage({type:'status', runId, status:'ready', text:'Interface atualizada'});
         } catch (error) {
@@ -4129,7 +4129,7 @@ function createPythonWorker() {
         const runtime = await ensurePyodide();
         if (useTkinter) await ensureTkinterLite(runtime);
         const packageScan = useTkinter
-          ? code.replace(/^\s*(?:import\s+tkinter.*|from\s+tkinter(?:\.\w+)?\s+import.*)$/gm, '')
+          ? code.replace(/^\\s*(?:import\\s+tkinter.*|from\\s+tkinter(?:\\.\\w+)?\\s+import.*)$/gm, '')
           : code;
         await runtime.loadPackagesFromImports(packageScan);
         runtime.setStdout({ batched: text => self.postMessage({type:'stdout', runId, text}) });
@@ -4150,6 +4150,13 @@ function createPythonWorker() {
       }
     };
   `;
+  try { new Function(workerSource); }
+  catch (error) {
+    pythonRuntimeBooting = false;
+    pythonRuntimeReady = false;
+    pythonRuntimeLastError = `Worker Python inválido: ${error?.message || String(error)}`;
+    throw new Error(pythonRuntimeLastError);
+  }
   const blob = new Blob([workerSource], { type:'text/javascript' });
   pythonWorkerUrl = URL.createObjectURL(blob);
   pythonWorker = new Worker(pythonWorkerUrl);

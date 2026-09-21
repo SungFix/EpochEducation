@@ -1,4 +1,4 @@
-# Epoch Education — histórico completo v1 a v62
+# Epoch Education — histórico completo v1 a v63
 
 Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
 
@@ -64,3 +64,4 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v60 — RELEASE** — Correção de regressão e desempenho: a coleção de alternativas de múltipla escolha volta a usar `$$()` corretamente, evitando falha em `.forEach`; o CI passa a proteger esse caso; e a inicialização deixa de renderizar todas as páginas ocultas antes do roteador, reduzindo trabalho de DOM e renderizações duplicadas. Atualizações de progresso também deixam de reconstruir telas ocultas desnecessariamente.
 - **v61 — RELEASE** — Correção completa das regressões de seletores: abas do Playground, sincronização de estado das abas e atalhos da busca voltam a usar `$$()` quando operam sobre coleções; a regra de CI da v60 foi corrigida e ampliada para detectar automaticamente uso direto de `$()` com métodos de coleção. A v60 teve falha de Qualidade e foi imediatamente substituída por esta correção.
 - **v62 — RELEASE** — Inicialização do Python/Pyodide otimizada: o runtime começa a ser preparado ao abrir a aba Python, antes do primeiro clique em Executar; o carregamento informa etapas reais; falhas de bootstrap deixam de prender a Promise rejeitada e podem ser tentadas novamente; o diagnóstico não acusa falta de internet para qualquer erro do Worker e passa a diferenciar sinal offline de falha de CDN/WebAssembly/Worker.
+- **v63 — RELEASE** — Corrigido `SyntaxError: Invalid or unexpected token` no Worker Python causado por escapes interpretados duas vezes dentro do template literal. A quebra `\n` do bridge Tkinter e a regex que remove imports de tkinter agora usam escapes duplos no código-fonte do Worker; antes de criar o Blob, a sintaxe final do Worker é validada com `new Function(workerSource)`, e o CI passa a verificar essas assinaturas.

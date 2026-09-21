@@ -129,9 +129,9 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*62/.test(platformSource)) fail('Versão de backup não atualizada para v62');
+if (!/appVersion\s*:\s*63/.test(platformSource)) fail('Versão de backup não atualizada para v63');
 else ok('Versão de backup atualizada');
-const expectedPublicVersion = 62;
+const expectedPublicVersion = 63;
 const publicVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1]));
 if (publicVersionRefs.some(version => version !== expectedPublicVersion)) fail(`Referências públicas fora da v${expectedPublicVersion}: ${[...new Set(publicVersionRefs)].join(', ')}`);
 else ok(`Referências públicas alinhadas na v${expectedPublicVersion}`);
@@ -180,6 +180,12 @@ if (appSource.includes('Verifique sua conexão com a internet.')) fail('Erro gen
 else ok('Erros do Python não culpam a conexão genericamente');
 if (!appSource.includes('pythonRuntimeReady') || !appSource.includes('pythonRuntimeBooting')) fail('Estado de inicialização do Python não é rastreado');
 else ok('Estado do runtime Python rastreado explicitamente');
+if (!appSource.includes("__ee_tk_apply_values(__ee_tk_values_json)\\\\n__ee_tk_invoke(__ee_tk_widget_id)")) fail('Worker Python sem escape duplo da quebra de linha Tkinter');
+else ok('Escape da quebra de linha Tkinter no Worker verificado');
+if (!appSource.includes("code.replace(/^\\\\s*(?:import\\\\s+tkinter")) fail('Regex do Worker Python sem escapes duplos');
+else ok('Escapes da regex do Worker Python verificados');
+if (!appSource.includes('new Function(workerSource)')) fail('Sintaxe final do Worker Python não é validada antes de criar o Worker');
+else ok('Sintaxe do Worker Python validada antes da criação');
 if (appSource.includes("dialog.style.width = 'min(560px")) fail('Largura do diálogo de ação voltou a ser controlada inline no JavaScript');
 else if (!css.includes('.action-dialog')) fail('Estilo consolidado do diálogo de ação ausente');
 else ok('Diálogo de ação controlado pelo CSS');
@@ -200,7 +206,7 @@ for (const standaloneFile of ['Epoch-Education.html','index-standalone-preview.h
 if (fs.existsSync(path.join(root,'Epoch-Education.html')) && fs.existsSync(path.join(root,'index-standalone-preview.html'))) {
   const standalone = read('Epoch-Education.html');
   const previewStandalone = read('index-standalone-preview.html');
-  if (!standalone.includes('data-build="62"')) fail('Standalone oficial não foi regenerado para v62');
+  if (!standalone.includes('data-build="63"')) fail('Standalone oficial não foi regenerado para v63');
   if (standalone !== previewStandalone) fail('Standalone oficial e preview standalone divergiram');
   else ok('Standalone oficial e preview estão sincronizados');
 }
