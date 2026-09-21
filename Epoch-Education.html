@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="62">
+<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="63">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9747,7 +9747,7 @@ function createPythonWorker() {
           const runtime = await ensurePyodide();
           runtime.globals.set('__ee_tk_values_json', JSON.stringify(event.data.values || {}));
           runtime.globals.set('__ee_tk_widget_id', String(event.data.widgetId || ''));
-          await runtime.runPythonAsync('__ee_tk_apply_values(__ee_tk_values_json)\n__ee_tk_invoke(__ee_tk_widget_id)');
+          await runtime.runPythonAsync('__ee_tk_apply_values(__ee_tk_values_json)\\n__ee_tk_invoke(__ee_tk_widget_id)');
           snapshotTkinter(runtime, runId);
           self.postMessage({type:'status', runId, status:'ready', text:'Interface atualizada'});
         } catch (error) {
@@ -9763,7 +9763,7 @@ function createPythonWorker() {
         const runtime = await ensurePyodide();
         if (useTkinter) await ensureTkinterLite(runtime);
         const packageScan = useTkinter
-          ? code.replace(/^\s*(?:import\s+tkinter.*|from\s+tkinter(?:\.\w+)?\s+import.*)$/gm, '')
+          ? code.replace(/^\\s*(?:import\\s+tkinter.*|from\\s+tkinter(?:\\.\\w+)?\\s+import.*)$/gm, '')
           : code;
         await runtime.loadPackagesFromImports(packageScan);
         runtime.setStdout({ batched: text => self.postMessage({type:'stdout', runId, text}) });
@@ -9784,6 +9784,13 @@ function createPythonWorker() {
       }
     };
   `;
+  try { new Function(workerSource); }
+  catch (error) {
+    pythonRuntimeBooting = false;
+    pythonRuntimeReady = false;
+    pythonRuntimeLastError = `Worker Python inválido: ${error?.message || String(error)}`;
+    throw new Error(pythonRuntimeLastError);
+  }
   const blob = new Blob([workerSource], { type:'text/javascript' });
   pythonWorkerUrl = URL.createObjectURL(blob);
   pythonWorker = new Worker(pythonWorkerUrl);
@@ -10648,7 +10655,7 @@ function init() {
 
 </script>
   <script>
-/* Epoch Education — platform features v62
+/* Epoch Education — platform features v63
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -10781,7 +10788,7 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:62,
+    appVersion:63,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
@@ -10988,7 +10995,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=62').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=63').catch(() => {});
   }
   renderPwaStatus();
 }
