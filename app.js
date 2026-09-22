@@ -3839,7 +3839,7 @@ sys.modules['tkinter.font']=_font
 `;
 
 function pythonUsesTkinter(code = '') {
-  return /(^|\n)\s*(?:import\s+tkinter(?:\s+as\s+\w+)?|from\s+tkinter(?:\.\w+)?\s+import\s+)/m.test(String(code));
+  return /(^|\n)\s*(?:import\s+tkinter(?:\.\w+)*(?:\s+as\s+\w+)?|from\s+tkinter(?:\.\w+)*\s+import\s+)/m.test(String(code));
 }
 
 function collectTkinterLiteValues() {
@@ -4086,8 +4086,22 @@ function createPythonWorker() {
     }
     async function ensureTkinterLite(runtime) {
       if (!tkinterInstalled) {
+        self.postMessage({type:'status', status:'loading', phase:'tkinter', text:'Preparando Tkinter Web Lite…'});
         await runtime.runPythonAsync(TKINTER_BOOTSTRAP);
+        await runtime.runPythonAsync([
+          'import tkinter as __ee_tk_test',
+          '__ee_tk_test_root = __ee_tk_test.Tk()',
+          '__ee_tk_test_root.title("Tkinter Web Lite")',
+          '__ee_tk_test.Label(__ee_tk_test_root, text="ok").pack()',
+          '__ee_tk_test_root.mainloop()'
+        ].join('\\n'));
+        const testSnapshot = JSON.parse(String(runtime.runPython('__ee_tk_snapshot()')));
+        if (!Array.isArray(testSnapshot?.widgets) || !testSnapshot.widgets.some(widget => widget.type === 'Tk')) {
+          throw new Error('O bridge Tkinter Web Lite não conseguiu criar a janela de teste.');
+        }
+        await runtime.runPythonAsync('__ee_tk_reset()');
         tkinterInstalled = true;
+        self.postMessage({type:'status', status:'ready', phase:'tkinter-ready', text:'Tkinter Web Lite pronto'});
       } else {
         await runtime.runPythonAsync('__ee_tk_reset()');
       }
@@ -4129,7 +4143,7 @@ function createPythonWorker() {
         const runtime = await ensurePyodide();
         if (useTkinter) await ensureTkinterLite(runtime);
         const packageScan = useTkinter
-          ? code.replace(/^\\s*(?:import\\s+tkinter.*|from\\s+tkinter(?:\\.\\w+)?\\s+import.*)$/gm, '')
+          ? code.replace(/^\\s*(?:import\\s+tkinter(?:\\.\\w+)*(?:\\s+as\\s+\\w+)?(?:\\s*,.*)?|from\\s+tkinter(?:\\.\\w+)*\\s+import.*)$/gm, '')
           : code;
         await runtime.loadPackagesFromImports(packageScan);
         runtime.setStdout({ batched: text => self.postMessage({type:'stdout', runId, text}) });
@@ -4145,7 +4159,8 @@ function createPythonWorker() {
         if (useTkinter) snapshotTkinter(runtime, runId);
         self.postMessage({type:'done', runId, tkinter:useTkinter});
       } catch (error) {
-        self.postMessage({type:'error', runId, text:error?.message || String(error)});
+        const prefix = useTkinter ? 'Tkinter Web Lite: ' : '';
+        self.postMessage({type:'error', runId, text:prefix + (error?.message || String(error))});
         self.postMessage({type:'done', runId, failed:true, tkinter:useTkinter});
       }
     };
@@ -4240,6 +4255,7 @@ function handlePythonWorkerMessage(event) {
     }
     setRunStatus(message.text || 'Processando…', message.status === 'ready' ? 'success' : 'running');
     if ($('#pythonRuntimeText')) $('#pythonRuntimeText').textContent = message.text || 'Python em execução.';
+    if (message.phase === 'tkinter-ready' && $('#runtimeBadge')) $('#runtimeBadge').textContent = 'Tkinter Web Lite · pronto';
     return;
   }
   if (message.type === 'prepared') {
